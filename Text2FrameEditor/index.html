@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text2Frame Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ─── Top Toolbar ───────────────────────────────────────────── -->
+  <div id="toolbar">
+    <div class="toolbar-group">
+      <button class="tb-btn" id="btn-open" title="打开 .txt 文件 (Ctrl+O)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l3 3h7a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/></svg>
+        <span>打开文件</span>
+      </button>
+      <button class="tb-btn" id="btn-export" title="导出为 .txt (Ctrl+S)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>导出文件</span>
+      </button>
+    </div>
+    <div class="toolbar-center">
+      <span id="toolbar-status">就绪</span>
+    </div>
+    <div class="toolbar-group toolbar-right">
+      <button class="tb-btn" id="btn-export-all" title="导出全部标签页">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 15 21 19 3 19 3 15"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>全部导出</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── Main Content ──────────────────────────────────────────── -->
+  <div id="main-container">
+
+    <!-- ─── Left: Tag Panel ───────────────────────────────────── -->
+    <aside id="tag-panel">
+      <div class="panel-header">
+        <div class="panel-tabs">
+          <button class="panel-tab active" data-tab="tags">标签</button>
+          <button class="panel-tab" data-tab="vars">变量/开关</button>
+        </div>
+      </div>
+      <div id="tag-panel-content" class="panel-content active">
+      <div class="panel-tools">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="tag-search" placeholder="搜索标签..." spellcheck="false">
+        </div>
+        <select id="tag-filter">
+          <option value="all">全部分类</option>
+        </select>
+      </div>
+            <div id="tag-list"></div>
+      <div id="tag-panel-bottom">
+        <div class="tag-panel-bottom-inner">
+          <div class="tag-panel-template-wrap">
+            <button class="tp-btn" id="btn-template" title="插入模板片段">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              模板
+            </button>
+            <div id="template-dropdown" class="dropdown-menu"></div>
+          </div>
+          <button class="tp-btn" id="btn-save-template" title="将选中文本保存为自定义模板（先选中文本再保存）">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+         保存模板
+         </button>
+          <button class="tp-btn tp-btn-export" id="btn-export-custom" title="导出自定义模板供下次导入">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            导出自定义
+          </button>
+          <button class="tp-btn" id="btn-import-custom" title="导入自定义模板（.json）">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            导入自定义
+          </button>
+        </div>
+      </div>
+      </div>
+      <!-- Vars panel -->
+      <div id="vars-panel" class="panel-content">
+        <div class="vars-toolbar">
+          <button class="vars-btn" id="btn-import-system" title="导入 RPG Maker 项目的 System.json">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            导入 System.json
+          </button>
+          <button class="vars-btn vars-btn-clear" id="btn-clear-vars" title="清除缓存的变量/开关数据">清除</button>
+        </div>
+        <div class="vars-search-wrap">
+          <input type="text" id="vars-search" placeholder="搜索 ID 或名称..." spellcheck="false">
+        </div>
+        <div id="vars-content">
+          <div class="vars-empty">尚未导入 System.json，请先点击上方按钮导入。</div>
+        </div>
+      </div>
+    </aside>
+    <!-- ─── Hidden file inputs ──── -->
+    <input type="file" id="import-custom-input" accept=".json" hidden>
+    <input type="file" id="system-json-input" accept=".json" hidden>
+
+    <!-- ─── Right: Editor Area ─────────────────────────────────── -->
+    <div id="editor-wrapper">
+    <main id="editor-area">
+      <!-- Tab bar -->
+      <div id="tab-bar">
+        <div id="tab-container"></div>
+        <button id="tab-add" title="新建标签页 (Ctrl+N)">+</button>
+      </div>
+
+      <!-- Editor body -->
+      <div id="editor-body">
+        <div id="line-numbers"></div>
+        <div id="editor-wrap">
+          <div id="highlight-layer" aria-hidden="true"></div>
+          <textarea id="editor" spellcheck="false" placeholder="开始编写剧本..."></textarea>
+        </div>
+      </div>
+
+      <!-- Bottom action bar -->
+      <div id="editor-bottom">
+        <div class="bottom-left">
+          <span id="stats-line">Line: 1</span>
+          <span class="stat-sep">|</span>
+          <span id="stats-char">Chars: 0</span>
+          <span class="stat-sep">|</span>
+          <span id="stats-tags">Tags: 0</span>
+                  <span class="stat-sep">|</span>
+          <button class="bottom-btn" id="btn-outline-toggle" title="切换大纲视图">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            大纲
+          </button></div>
+        <div class="bottom-right">
+          <button class="bottom-btn" id="btn-undo" title="撤销 (Ctrl+Z)" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            撤销
+          </button>
+          <button class="bottom-btn" id="btn-redo" title="重做 (Ctrl+Shift+Z)" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            重做
+          </button>
+        </div>
+        </div>  </main>
+    <aside id="outline-panel" class="outline-hidden">
+      <div class="outline-header">
+        <h2>大纲</h2>
+        <button id="btn-outline-close" class="outline-close" title="关闭大纲">&times;</button>
+      </div>
+      <div id="outline-content"></div>
+    </aside>
+    </div>
+  </div>
+
+  <!-- ─── Template Name Dialog ────────────────────────────────────── -->
+  <div id="template-dialog-overlay" class="dialog-overlay hidden">
+    <div class="dialog-box">
+      <div class="dialog-header">保存为自定义模板</div>
+      <div class="dialog-body">
+        <label for="template-dialog-input">模板名称</label>
+        <input type="text" id="template-dialog-input" placeholder="输入模板名称..." spellcheck="false">
+      </div>
+      <div class="dialog-footer">
+        <button class="dialog-btn dialog-btn-cancel" id="template-dialog-cancel">取消</button>
+        <button class="dialog-btn dialog-btn-confirm" id="template-dialog-confirm">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Status Bar ────────────────────────────────────────────── -->
+  <div id="status-bar">
+    <span id="status-auto-save">自动保存已启用</span>
+    <span id="status-saved-time"></span>
+    <span id="status-shortcuts">Ctrl+S 导出  |  Ctrl+O 打开  |  Ctrl+N 新建  |  Ctrl+W 关闭</span>
+  </div>
+
+  <!-- ─── File Input (hidden) ─────────────────────────────────── -->
+  <input type="file" id="file-input" accept=".txt" hidden>
+
+  <script src="tags-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+
+
