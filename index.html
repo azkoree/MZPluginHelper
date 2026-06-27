@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MZ Plugin Helper</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f7f8fa;
+      color: #2c3e50;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 640px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+    .sub {
+      font-size: 0.9rem;
+      color: #7f8c9b;
+      margin-bottom: 2.5rem;
+    }
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+    }
+    .card:hover {
+      background: #f0f2f5;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+    .card-name {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .card-arrow {
+      font-size: 0.85rem;
+      color: #a0aab6;
+      transition: transform 0.15s;
+    }
+    .card:hover .card-arrow {
+      transform: translateX(3px);
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: #b0b8c4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MZ Plugin Helper</h1>
+    <p class="sub">RPG Maker MZ 插件辅助工具集</p>
+    <div class="card-list">
+      <a class="card" href="GlossaryEditor/index.html">
+        <span class="card-name"> GlossaryEditor</span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="ItemInfoEditor/index.html">
+        <span class="card-name"> ItemInfoEditor</span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="Notehelper/NoteHelper/index.html">
+        <span class="card-name"> Notehelper</span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="PluginDescEditor/index.html">
+        <span class="card-name"> PluginDescEditor</span>
+        <span class="card-arrow">→</span>
+      </a>
+      <a class="card" href="Text2FrameEditor/index.html">
+        <span class="card-name"> Text2FrameEditor/index</span>
+        <span class="card-arrow">→</span>
+      </a>
+    </div>
+    <footer>RPG Maker MZ · Plugin Helper</footer>
+  </div>
+</body>
+</html>

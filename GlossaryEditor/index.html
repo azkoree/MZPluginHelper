@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlossaryData 编辑器</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <div class="toolbar">
+            <span class="title">
+                GlossaryData 编辑器
+                <small>for SceneGlossary</small>
+            </span>
+            <button class="btn" id="btn-import">&#x1F4C2; 导入 JSON</button>
+            <input type="file" id="import-input" accept=".json,.txt">
+            <button class="btn btn-success" id="btn-export">&#x1F4E4; 导出 JSON</button>
+        </div>
+
+        <div class="main-area">
+            <!-- 左侧列表 -->
+            <div class="list-panel" id="list-panel">
+                <div class="list-header">
+                    <span>条目列表</span>
+                    <span id="list-count">0 条</span>
+                </div>
+                <!-- 筛选行 -->
+                <div class="list-filters" id="list-filters">
+                    <select id="filter-category" class="filter-select">
+                        <option value="">分类：全部</option>
+                    </select>
+                    <select id="filter-glossary-type" class="filter-select">
+                        <option value="">词典id：全部</option>
+                    </select>
+                </div>
+                <div class="list-body" id="list-body"></div>
+                <div class="list-actions" id="list-actions">
+                    <button class="btn btn-primary" id="btn-new">+ 新建</button>
+                    <button class="btn btn-danger" id="btn-delete">&#x1F5D1; 删除</button>
+                </div>
+            </div>
+
+            <!-- 右侧编辑器 -->
+            <div class="editor-panel hidden" id="editor-panel">
+                <form class="editor-form" id="editor-form" autocomplete="off">
+                    <div class="editor-fields">
+                        <div class="field-group">
+                            <label for="field-id">ID</label>
+                            <input type="number" id="field-id" min="1" placeholder="条目编号">
+                        </div>
+                        <div class="field-group">
+                            <label for="field-name">条目名称</label>
+                            <input type="text" id="field-name" placeholder="名称">
+                        </div>
+                        <div class="field-group">
+                            <label for="field-icon">图标索引</label>
+                            <input type="number" id="field-icon" min="0" placeholder="0">
+                        </div>
+                        <div class="field-group">
+                            <label for="field-itypeid">itypeId</label>
+                            <input type="number" id="field-itypeid" min="0" value="4" readonly
+                                   title="导出时固定为 4">
+                        </div>
+                        <div class="field-group">
+                            <label for="field-category">分类
+                                <span class="field-hint">&lt;SGCategory&gt;</span></label>
+                            <input type="text" id="field-category" list="category-list"
+                                   placeholder="输入或选择分类">
+                            <datalist id="category-list"></datalist>
+                        </div>
+                        <div class="field-group">
+                            <label for="field-glossary-type">词典id
+                                <span class="field-hint">&lt;SGType&gt;</span></label>
+                            <input type="text" id="field-glossary-type" placeholder="如 1">
+                        </div>
+                    </div>
+
+                    <div class="note-area">
+                        <label>
+                            Note（词典文本 / 备注标签）
+                            <span class="tag-hint">&#x2139;&#xFE0F; 分类和词典id已单独设置，无需写入 note</span>
+                        </label>
+                        <div class="tag-toolbar" id="tag-toolbar">
+                            <select id="tag-select" class="tag-select">
+                                <option value="">— 选择标签插入 —</option>
+                            </select>
+                            <button type="button" class="btn btn-small" id="btn-insert-tag">插入标签</button>
+                            <span class="tag-sep"></span>
+                            <span class="tag-switch-label">快速开关:</span>
+                            <span id="tag-switches"></span>
+                        </div>
+                        <textarea id="field-note" spellcheck="false"
+                                  placeholder="在此输入词典文本和备注标签&#10;&#10;例如：&#10;&lt;SGDescription:说明文字&gt;&#10;&lt;SGManual&gt;"></textarea>
+                    </div>
+
+                    <div class="editor-actions">
+                        <button type="button" class="btn btn-primary" id="btn-save">&#x1F4BE; 保存</button>
+                        <span class="spacer"></span>
+                        <span style="font-size:12px;color:var(--text-muted);">
+                            Ctrl + S 快速保存
+                        </span>
+                    </div>
+                </form>
+            </div>
+
+            <div class="empty-message" id="empty-message">
+                <div class="icon">&#x1F4DA;</div>
+                <div>请导入 GlossaryData.json 开始编辑</div>
+                <div class="hint">支持拖拽文件到窗口，或点击上方「导入 JSON」按钮</div>
+            </div>
+        </div>
+
+        <div class="status-bar" id="status-bar">就绪</div>
+    </div>
+
+    <div class="drop-overlay" id="drop-overlay">
+        <div class="drop-text">&#x1F4C2; 松开以导入 JSON 文件</div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/tags.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

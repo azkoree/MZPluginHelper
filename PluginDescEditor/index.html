@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMMZ 插件翻译编辑器</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <h1>&#9999;&#65039; RMMZ 插件翻译编辑器</h1>
+  <button onclick="triggerLoad()" class="btn-primary">&#128194; 打开文件</button>
+  <button onclick="saveTranslationState()">&#128190; 保存进度</button>
+  <button onclick="loadTranslationState()">&#128193; 载入进度</button>
+  <button onclick="exportTranslated()">&#128228; 导出翻译</button>
+  <span id="statusMessage" style="font-size:13px;opacity:0.8;flex:1;"></span>
+  <span class="header-status">
+    <span id="fileNameDisplay" style="font-size:12px;opacity:0.7;">(未加载)</span>
+    <span class="progress-bar">
+      <span id="progressText">0/0</span>
+      <span class="bar-track"><span class="bar-fill" id="progressFill" style="width:0%"></span></span>
+    </span>
+  </span>
+</header>
+
+<!-- Toolbar -->
+<div class="toolbar" id="toolbar" style="display:none;">
+  <input type="text" placeholder="搜索原文或翻译..." oninput="onSearch(event)">
+  <div class="lang-group" id="langGroup" style="display:none;">
+    <span class="lang-label">&#127760; 源语言：</span>
+    <div class="lang-btns" id="langBtns"></div>
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">全部 <span class="count">0</span></button>
+    <button class="filter-btn" data-filter="untranslated" onclick="setFilter('untranslated')">未翻译 <span class="count">0</span></button>
+    <button class="filter-btn" data-filter="translated" onclick="setFilter('translated')">已翻译 <span class="count">0</span></button>
+  </div>
+</div>
+
+<!-- File input -->
+<input type="file" id="fileInput" accept=".js" onchange="onFileSelected(event)" style="display:none;">
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+
+  <!-- Empty state -->
+  <div class="empty-state" id="emptyState" style="display:flex;">
+    <div class="icon">&#128220;</div>
+    <p>拖放 RMMZ 插件 .js 文件到此处，或点击上方「打开文件」</p>
+    <div class="hint">支持解析 @help, @text, @desc, @option/@value, @on/@off, @plugindesc, @author 等标签</div>
+  </div>
+
+  <!-- Items container -->
+  <div class="items-container" id="itemsContainer"></div>
+</div>
+
+<!-- Export panel -->
+<div class="export-panel" id="exportPanel">
+  <div class="export-header">
+    <span>&#128228; 导出预览 - 已翻译的内容将替换原文格式，可直接复制替换到插件文件中</span>
+    <button onclick="copyExportToClipboard()">&#128203; 复制</button>
+    <button onclick="downloadExport()">&#11015; 下载</button>
+    <button onclick="hideExportPanel()">&#10005; 关闭</button>
+  </div>
+  <pre></pre>
+</div>
+
+<script src="rmmz-parser.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
+

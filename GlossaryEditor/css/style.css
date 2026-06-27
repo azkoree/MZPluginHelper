@@ -1,0 +1,206 @@
+﻿/*=============================================================================
+  style.css - GlossaryData 编辑器
+=============================================================================*/
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:           #f4f5f7;
+    --panel-bg:     #ffffff;
+    --border:       #d0d5dd;
+    --border-light: #e5e7eb;
+    --text:         #1d2939;
+    --text-muted:   #667085;
+    --accent:       #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-light: #eff6ff;
+    --danger:       #ef4444;
+    --success:      #10b981;
+    --radius:       6px;
+    --radius-sm:    4px;
+    --font:         -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                    "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono-font:    "SF Mono", "Cascadia Code", "Consolas", "Liberation Mono", monospace;
+}
+
+html, body { height: 100%; font-family: var(--font); font-size: 14px; line-height: 1.6; color: var(--text); background: var(--bg); }
+
+#app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* ========== Toolbar ========== */
+
+.toolbar {
+    display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+    background: var(--panel-bg); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; z-index: 10;
+}
+.toolbar .title { font-size: 16px; font-weight: 600; margin-right: 16px; color: var(--text); white-space: nowrap; }
+.toolbar .title small { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 6px; }
+
+/* ========== Common Buttons ========== */
+
+.btn {
+    display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px;
+    font-size: 13px; font-family: var(--font); font-weight: 500;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--panel-bg); color: var(--text); cursor: pointer;
+    white-space: nowrap; transition: background 0.15s, border-color 0.15s;
+}
+.btn:hover { background: #f9fafb; border-color: #9ca3af; }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-danger { color: var(--danger); border-color: var(--danger); }
+.btn-danger:hover { background: #fef2f2; }
+.btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+.btn-success:hover { background: #059669; border-color: #059669; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-small { padding: 4px 10px; font-size: 12px; }
+#import-input { display: none; }
+
+/* ========== Main Area ========== */
+
+.main-area { display: flex; flex: 1; overflow: hidden; }
+
+/* ========== Left Panel ========== */
+
+.list-panel {
+    width: 320px; min-width: 240px; background: var(--panel-bg);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0;
+}
+
+.list-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-bottom: 1px solid var(--border-light);
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+}
+
+/* ---- 筛选行 ---- */
+
+.list-filters {
+    display: flex; gap: 6px; padding: 8px 14px;
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+}
+
+.filter-select {
+    flex: 1; min-width: 0;
+    padding: 4px 6px; font-size: 12px; font-family: var(--font);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: #fff; color: var(--text); outline: none; cursor: pointer;
+    transition: border-color 0.12s;
+}
+.filter-select:focus { border-color: var(--accent); }
+
+/* ---- 列表体 ---- */
+
+.list-body { flex: 1; overflow-y: auto; padding: 4px 0; }
+.list-body::-webkit-scrollbar { width: 6px; }
+.list-body::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 3px; }
+.list-body::-webkit-scrollbar-track { background: transparent; }
+
+.list-item {
+    display: flex; align-items: baseline; gap: 8px; padding: 8px 14px;
+    cursor: pointer; border-left: 3px solid transparent; transition: background 0.1s;
+}
+.list-item:hover { background: #f9fafb; }
+.list-item.selected { background: var(--accent-light); border-left-color: var(--accent); }
+.list-item-id { font-family: var(--mono-font); font-size: 12px; color: var(--text-muted); min-width: 50px; flex-shrink: 0; }
+.list-item-name { flex: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-item-category { font-size: 11px; color: var(--text-muted); background: #f0f2f5; padding: 1px 6px; border-radius: 3px; flex-shrink: 0; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-empty { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* ---- 列表底部 ---- */
+
+.list-actions { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border-light); flex-shrink: 0; }
+.list-actions .btn { flex: 1; justify-content: center; }
+
+/* ========== Right Panel ========== */
+
+.editor-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--panel-bg); }
+.editor-panel.hidden { display: none; }
+
+.empty-message { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; }
+.empty-message .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+.empty-message .hint { font-size: 13px; margin-top: 8px; opacity: 0.7; }
+
+.editor-form { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.editor-fields {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px;
+    padding: 16px 20px 12px; border-bottom: 1px solid var(--border-light);
+}
+.field-group { display: flex; flex-direction: column; gap: 3px; }
+.field-group label { font-size: 12px; font-weight: 500; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; }
+.field-hint { font-weight: 400; color: #9ca3af; font-family: var(--mono-font); font-size: 11px; }
+.field-group input, .field-group select {
+    padding: 6px 10px; font-size: 13px; font-family: var(--font);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: #fff; color: var(--text); outline: none; transition: border-color 0.15s;
+}
+.field-group input:focus, .field-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+.field-group input[type="number"] { font-family: var(--mono-font); }
+.field-group input::placeholder { color: #9ca3af; }
+
+/* ========== Note Area ========== */
+
+.note-area { flex: 1; display: flex; flex-direction: column; padding: 10px 20px 16px; min-height: 0; }
+.note-area > label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.note-area > label .tag-hint { font-weight: 400; font-size: 11px; color: #9ca3af; }
+.note-area textarea {
+    flex: 1; min-height: 160px; padding: 10px 12px;
+    font-size: 13px; font-family: var(--mono-font); line-height: 1.7;
+    border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius);
+    resize: none; outline: none; background: #fff; color: var(--text); tab-size: 4;
+    transition: border-color 0.15s;
+}
+.note-area textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+.note-area textarea::-webkit-scrollbar { width: 8px; }
+.note-area textarea::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 4px; }
+
+/* ========== Tag Toolbar ========== */
+
+.tag-toolbar {
+    display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+    background: #f9fafb; border: 1px solid var(--border); border-bottom: none;
+    border-radius: var(--radius) var(--radius) 0 0; flex-shrink: 0; flex-wrap: wrap;
+}
+.tag-select {
+    padding: 4px 8px; font-size: 12px; font-family: var(--font);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: #fff; color: var(--text); outline: none; cursor: pointer; max-width: 220px;
+}
+.tag-select:focus { border-color: var(--accent); }
+.tag-sep { display: inline-block; width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+.tag-switch-label { font-size: 11px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+#tag-switches { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+
+.tag-chip {
+    display: inline-flex; align-items: center; padding: 2px 8px;
+    font-size: 11px; font-family: var(--font); font-weight: 500;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: #fff; color: var(--text-muted); cursor: pointer;
+    transition: all 0.12s; white-space: nowrap;
+}
+.tag-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.tag-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ========== Editor Actions ========== */
+
+.editor-actions { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-top: 1px solid var(--border-light); background: #fafbfc; flex-shrink: 0; }
+.editor-actions .spacer { flex: 1; }
+
+/* ========== Status Bar ========== */
+
+.status-bar { padding: 6px 16px; font-size: 12px; color: var(--text-muted); background: #fafbfc; border-top: 1px solid var(--border-light); flex-shrink: 0; }
+.status-bar.status-error { color: #fff; background: var(--danger); font-weight: 500; }
+
+/* ========== Drop Overlay ========== */
+
+.drop-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(37,99,235,0.08); border: 3px dashed var(--accent); align-items: center; justify-content: center; pointer-events: none; }
+.drop-overlay.active { display: flex; }
+.drop-overlay .drop-text { font-size: 20px; font-weight: 600; color: var(--accent); background: rgba(255,255,255,0.9); padding: 24px 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
+
+/* ========== Utility ========== */
+
+.hidden { display: none !important; }

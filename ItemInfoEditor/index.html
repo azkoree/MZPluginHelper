@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道具信息备注编辑器 - ItemInfoWindow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <span class="title">
+                道具信息备注编辑器
+                <small>for GF_3_ItemInfoWindow</small>
+            </span>
+            <button class="btn btn-danger btn-small" id="btn-clear">清空</button>
+        </div>
+
+        <!-- Main Area -->
+        <div class="main-area">
+
+            <!-- Left: Form Panel -->
+            <div class="form-panel">
+                <!-- Left tabs -->
+                <div class="left-tabs">
+                    <div class="left-tab active" data-tab="setup">预览信息</div>
+                    <div class="left-tab" data-tab="layer1">层1</div>
+                    <div class="left-tab" data-tab="layer2">层2</div>
+                    <div class="left-tab" data-tab="layer3">层3</div>
+                    <div class="left-tab" data-tab="layer4">层4</div>
+                    <div class="left-tab" data-tab="layer5">层5</div>
+                    <div class="left-tab" data-tab="eval">预处理</div>
+                </div>
+
+                <div class="form-body-tabs" id="form-body">
+
+                    <!-- ====== Tab: 预览信息 ====== -->
+                    <div class="left-tab-content active" data-tab="setup">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>预览物品名称</h3>
+                                <span class="tag-example">仅用于可视化预览</span>
+                            </div>
+                            <input type="text" id="item-name" class="block-textarea" rows="1"
+                                   style="min-height:auto;height:36px;font-size:14px;font-weight:600;"
+                                   placeholder="输入物品名称，以查看完整的窗口预览效果">
+                        </div>
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>层级标题设置</h3>
+                                <span class="tag-example">对应插件参数 ParamTitleSet</span>
+                            </div>
+                            <div class="layer-config-grid" id="layer-config"></div>
+                        </div>
+                    </div>
+
+                    <!-- ====== Tab: 层1 ====== -->
+                    <div class="left-tab-content" data-tab="layer1">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>顶部信息</h3>
+                                <span class="tag-example">&lt;Info Text Top&gt; [层1]</span>
+                            </div>
+                            <textarea id="info-text-top" class="block-textarea" rows="5"
+                                      placeholder="每行显示为一行文本，支持控制字符&#10;例如：&#10;传说中唯有命中注定之人方可挥舞&#10;此剑蕴含着远古的烈焰之力"></textarea>
+                        </div>
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>帮助插入·前</h3>
+                                <span class="tag-example">&lt;PreHelp&gt; [层1]</span>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-chip" id="chip-prehelp">
+                                    <span class="dot"></span>
+                                    描述前插入帮助（PreHelp）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述前（层1）</h3>
+                                <span class="tag-example">&lt;PreInfo 1: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="1" data-type="preinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层1自动生成内容之前。
+                            </p>
+                            <div class="row-list layer-rows" id="layer1-preinfo-rows"></div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述后（层1）</h3>
+                                <span class="tag-example">&lt;AfterInfo 1: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="1" data-type="afterinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层1自动生成内容之后。
+                            </p>
+                            <div class="row-list layer-rows" id="layer1-afterinfo-rows"></div>
+                        </div>
+                    </div>
+
+                    <!-- ====== Tab: 层2 ====== -->
+                    <div class="left-tab-content" data-tab="layer2">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述前（层2·默认）</h3>
+                                <span class="tag-example">&lt;PreInfo&gt; [默认层2]</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="2" data-type="preinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                不指定层级的 PreInfo 默认归入层2，显示在自动生成的参数/特性内容之前。
+                            </p>
+                            <div class="row-list layer-rows" id="layer2-preinfo-rows"></div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述后（层2·默认）</h3>
+                                <span class="tag-example">&lt;AfterInfo&gt; [默认层2]</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="2" data-type="afterinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                不指定层级的 AfterInfo 默认归入层2，显示在自动生成的参数/特性内容之后。
+                            </p>
+                            <div class="row-list layer-rows" id="layer2-afterinfo-rows"></div>
+                        </div>
+                    </div>
+
+                    <!-- ====== Tab: 层3 ====== -->
+                    <div class="left-tab-content" data-tab="layer3">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>层3 — 效果信息</h3>
+                                <span class="tag-example">插件自动生成（伤害·回复·状态）</span>
+                            </div>
+                            <div class="layer-auto-note">
+                                <span class="label">⚡ 此层级主要内容由插件自动生成</span><br>
+                                包括：伤害用语、回复效果、状态强化、护甲穿透、元素用语等。<br>
+                                你可以在下方添加自定义的 <code>&lt;PreInfo 3:...&gt;</code> 或 <code>&lt;AfterInfo 3:...&gt;</code> 行，
+                                它们会显示在自动生成内容之前/之后。
+                            </div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述前（层3）</h3>
+                                <span class="tag-example">&lt;PreInfo 3: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="3" data-type="preinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层3自动生成内容之前。
+                            </p>
+                            <div class="row-list layer-rows" id="layer3-preinfo-rows"></div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述后（层3）</h3>
+                                <span class="tag-example">&lt;AfterInfo 3: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="3" data-type="afterinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层3自动生成内容之后。
+                            </p>
+                            <div class="row-list layer-rows" id="layer3-afterinfo-rows"></div>
+                        </div>
+                    </div>
+
+                    <!-- ====== Tab: 层4 ====== -->
+                    <div class="left-tab-content" data-tab="layer4">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>底部信息</h3>
+                                <span class="tag-example">&lt;Info Text Bottom&gt; [层4]</span>
+                            </div>
+                            <textarea id="info-text-bottom" class="block-textarea" rows="5"
+                                      placeholder="每行显示为一行文本，支持控制字符&#10;例如：&#10;此物品不可交易&#10;售价：5000G"></textarea>
+                        </div>
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>帮助插入·后</h3>
+                                <span class="tag-example">&lt;AfterHelp&gt; [层4]</span>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-chip" id="chip-afterhelp">
+                                    <span class="dot"></span>
+                                    描述后插入帮助（AfterHelp）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述前（层4）</h3>
+                                <span class="tag-example">&lt;PreInfo 4: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="4" data-type="preinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层4自动生成内容之前。
+                            </p>
+                            <div class="row-list layer-rows" id="layer4-preinfo-rows"></div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述后（层4）</h3>
+                                <span class="tag-example">&lt;AfterInfo 4: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="4" data-type="afterinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层4自动生成内容之后。
+                            </p>
+                            <div class="row-list layer-rows" id="layer4-afterinfo-rows"></div>
+                        </div>
+                    </div>
+
+                    <!-- ====== Tab: 层5 ====== -->
+                    <div class="left-tab-content" data-tab="layer5">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>层5 — 条件消耗</h3>
+                                <span class="tag-example">插件自动生成（技能消耗·装备条件）</span>
+                            </div>
+                            <div class="layer-auto-note">
+                                <span class="label">⚡ 此层级主要内容由插件自动生成</span><br>
+                                包括：技能消耗（HP/MP/TP/金币/道具）、装备/技能条件等。<br>
+                                你可以在下方添加自定义的 <code>&lt;PreInfo 5:...&gt;</code> 或 <code>&lt;AfterInfo 5:...&gt;</code> 行，
+                                它们会显示在自动生成内容之前/之后。
+                            </div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述前（层5）</h3>
+                                <span class="tag-example">&lt;PreInfo 5: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="5" data-type="preinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层5自动生成内容之前。
+                            </p>
+                            <div class="row-list layer-rows" id="layer5-preinfo-rows"></div>
+                        </div>
+                        <div class="form-section layer-row-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>描述后（层5）</h3>
+                                <span class="tag-example">&lt;AfterInfo 5: x&gt;</span>
+                                <span class="spacer"></span>
+                                <button class="btn btn-primary btn-small add-layer-row" data-layer="5" data-type="afterinfo">+ 添加一行</button>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                显示在层5自动生成内容之后。
+                            </p>
+                            <div class="row-list layer-rows" id="layer5-afterinfo-rows"></div>
+                        </div>
+                    </div>
+
+                    
+                                        <!-- ====== Tab: 信息预处理 ====== -->
+                    <div class="left-tab-content" data-tab="eval">
+                        <div class="form-section" style="margin-bottom:0;">
+                            <div class="section-header">
+                                <h3>信息预处理</h3>
+                                <span class="tag-example">&lt;Info Eval&gt; ... &lt;/Info Eval&gt;</span>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">
+                                在自动生成描述前运行的 JavaScript 代码，可用于设置变量等操作。
+                            </p>
+                            <textarea id="info-eval" class="code-textarea" rows="8"
+                                      placeholder="$gameVariables.setValue(1, 100);&#10;$gameSwitches.setValue(1, true);"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right: Preview Panel -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h3>预览</h3>
+                    <span class="spacer"></span>
+                    <span style="font-size:11px;color:var(--text-muted);">Ctrl+S 快速复制</span>
+                </div>
+                <div class="preview-tabs">
+                    <div class="preview-tab active" id="tab-source">备注文本</div>
+                    <div class="preview-tab" id="tab-parse">导入解析</div>
+                    <div class="preview-tab" id="tab-visual">可视化预览</div>
+                </div>
+                <div class="preview-body">
+                    <div class="panel-source active" id="panel-source">
+                        <textarea id="preview-text" class="preview-textarea" readonly
+                                  placeholder="编辑左侧内容，此处将实时生成备注标签文本&#10;&#10;复制后可直接粘贴到数据库的备注栏中"></textarea>
+                    </div>
+                    <div class="panel-parse" id="panel-parse">
+                        <div class="parse-body">
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">
+                                从数据库备注栏或其他地方复制备注标签文本粘贴到下方，然后点击解析。
+                            </p>
+                            <textarea id="parse-input" class="parse-textarea" spellcheck="false"
+                                      placeholder="在此粘贴备注标签文本..."></textarea>
+                            <button class="btn btn-primary" id="btn-parse" style="width:100%;justify-content:center;margin-top:8px;">→ 解析到编辑器</button>
+                        </div>
+                    </div>
+                    <div class="panel-visual" id="panel-visual">
+                        <div class="visual-preview" id="visual-preview">
+                            <div class="visual-empty">
+                                <div>
+                                    <div style="font-size:32px;margin-bottom:8px;opacity:0.3;">⬡</div>
+                                    <div>编辑左侧内容即可预览显示效果</div>
+                                    <div style="font-size:12px;margin-top:4px;color:var(--text-muted);">
+                                        在左侧「层级标题设置」中可以自定义各层标题
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button class="btn btn-success" id="btn-copy">复制到剪贴板</button>
+                    
+                </div>
+            </div>
+
+        </div>
+
+        <div class="status-bar" id="status-bar">就绪</div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
