@@ -4,131 +4,279 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MZ Plugin Helper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f7f8fa;
-      color: #2c3e50;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: #f2f4f8;
+      color: #1e293b;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 2rem 1.5rem;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(37, 99, 235, 0.035) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 50% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 70%);
     }
+
     .container {
-      max-width: 640px;
+      max-width: 720px;
       width: 100%;
     }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .emblem {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      margin-bottom: 1.25rem;
+      box-shadow: 0 0 30px rgba(217, 119, 6, 0.2);
+    }
+    .emblem svg {
+      width: 28px;
+      height: 28px;
+      color: #ffffff;
+    }
+
     h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-      letter-spacing: -0.02em;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      margin-bottom: 0.5rem;
     }
+    h1 .highlight {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .sub {
-      font-size: 0.9rem;
-      color: #7f8c9b;
-      margin-bottom: 2.5rem;
+      font-size: 0.925rem;
+      color: #6b7280;
+      font-weight: 400;
+      letter-spacing: 0.02em;
     }
-    .card-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.875rem;
     }
+
     .card {
+      position: relative;
       background: #ffffff;
       border-radius: 10px;
-      padding: 1rem 1.25rem;
+      padding: 1.125rem 1.125rem 1.125rem 1.25rem;
       text-decoration: none;
       color: inherit;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-      transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+      gap: 0.875rem;
+      overflow: hidden;
+      outline: 1px solid transparent;
+      outline-offset: 2px;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      border-radius: 3px 0 0 3px;
+      transition: width 0.2s ease;
     }
     .card:hover {
-      background: #f0f2f5;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transform: translateY(-1px);
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    }
+    .card:hover::before {
+      width: 4px;
+    }
+    .card:focus-visible {
+      outline-color: #d97706;
+    }
+
+    .card--plugin::before  { background: #3b82f6; }
+    .card--note::before    { background: #10b981; }
+    .card--glossary::before{ background: #d97706; }
+    .card--iteminfo::before{ background: #ec4899; }
+    .card--text2frame::before{ background: #06b6d4; }
+    .card--db::before      { background: #8b5cf6; }
+
+    .card-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .card-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+    .card--plugin .card-icon  { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .card--note .card-icon    { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .card--glossary .card-icon{ background: rgba(217, 119, 6, 0.1); color: #d97706; }
+    .card--iteminfo .card-icon{ background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    .card--text2frame .card-icon{ background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
+    .card--db .card-icon      { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+    .card:hover .card-icon {
+      transform: scale(1.05);
+    }
+
+    .card-body {
+      flex: 1;
+      min-width: 0;
     }
     .card-name {
-      font-size: 1rem;
-      font-weight: 500;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      letter-spacing: -0.01em;
+      color: #0f172a;
     }
     .card-desc {
       font-size: 0.8rem;
-      color: #8e99a8;
+      color: #6b7280;
       margin-top: 0.2rem;
+      line-height: 1.45;
     }
+
     .card-arrow {
-      font-size: 0.85rem;
-      color: #a0aab6;
-      transition: transform 0.15s;
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
     }
     .card:hover .card-arrow {
-      transform: translateX(3px);
+      color: #d97706;
+      background: rgba(217, 119, 6, 0.08);
+      transform: translateX(2px);
     }
+
     footer {
       margin-top: 3rem;
       font-size: 0.8rem;
-      color: #b0b8c4;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      body { padding: 1.5rem 1rem; }
+      h1 { font-size: 1.625rem; }
+      header { margin-bottom: 2rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card, .card-icon, .card-arrow, .card::before { transition: none; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>MZ Plugin Helper</h1>
-    <p class="sub">RPG Maker MZ 插件辅助工具集</p>
-    <div class="card-list">
-      <a class="card" href="PluginDescEditor/index.html">
-        <div>
+    <header>
+      <div class="emblem" aria-hidden="true">
+        <i data-lucide="wrench" style="width:28px;height:28px;"></i>
+      </div>
+      <h1>MZ <span class="highlight">Plugin Helper</span></h1>
+      <p class="sub">RPG Maker MZ 插件辅助工具集</p>
+    </header>
+
+    <div class="grid">
+      <a class="card card--plugin" href="PluginDescEditor/index.html">
+        <div class="card-icon"><i data-lucide="file-code"></i></div>
+        <div class="card-body">
           <div class="card-name">PluginDescEditor</div>
-          <div class="card-desc">导入插件描述和参数文本，可动进行替换并导出</div>
+          <div class="card-desc">导入插件描述和参数文本，可进行批量替换并导出</div>
         </div>
-        <span class="card-arrow">→</span>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
-      <a class="card" href="Notehelper/index.html">
-        <div>
+
+      <a class="card card--note" href="Notehelper/index.html">
+        <div class="card-icon"><i data-lucide="sticky-note"></i></div>
+        <div class="card-body">
           <div class="card-name">Notehelper</div>
-          <div class="card-desc">可以快速导入插件标签，点击插入的备注编辑器</div>
+          <div class="card-desc">快速导入插件标签，点击即插入的备注编辑器</div>
         </div>
-        <span class="card-arrow">→</span>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
-      <a class="card" href="GlossaryEditor/index.html">
-        <div>
+
+      <a class="card card--glossary" href="GlossaryEditor/index.html">
+        <div class="card-icon"><i data-lucide="book-open"></i></div>
+        <div class="card-body">
           <div class="card-name">GlossaryEditor</div>
-          <div class="card-desc">SceneGlossary的外部json支持，可视化编辑器</div>
+          <div class="card-desc">SceneGlossary 外部 JSON 可视化编辑器</div>
         </div>
-        <span class="card-arrow">→</span>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
-      <a class="card" href="ItemInfoEditor/index.html">
-        <div>
+
+      <a class="card card--iteminfo" href="ItemInfoEditor/index.html">
+        <div class="card-icon"><i data-lucide="info"></i></div>
+        <div class="card-body">
           <div class="card-name">ItemInfoEditor</div>
-          <div class="card-desc">编写GF_3_ItemInfoWindow格式的道具信息，可视化预览</div>
+          <div class="card-desc">GF_3_ItemInfoWindow 格式道具信息可视化编写与预览</div>
         </div>
-        <span class="card-arrow">→</span>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
-      <a class="card" href="Text2FrameEditor/index.html">
-        <div>
+
+      <a class="card card--text2frame" href="Text2FrameEditor/index.html">
+        <div class="card-icon"><i data-lucide="align-left"></i></div>
+        <div class="card-body">
           <div class="card-name">Text2FrameEditor</div>
-          <div class="card-desc">Text2Frame格式的文本编辑器</div>
+          <div class="card-desc">Text2Frame 格式文本编辑器</div>
         </div>
-        <span class="card-arrow">→</span>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
-      <a class="card" href="DBManager/index.html">
-        <div>
+
+      <a class="card card--db" href="DBManager/index.html">
+        <div class="card-icon"><i data-lucide="database"></i></div>
+        <div class="card-body">
           <div class="card-name">DBManager</div>
           <div class="card-desc">表格式数据库管理器</div>
         </div>
-        <span class="card-arrow">→</span>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
-
-
     </div>
+
     <footer>RPG Maker MZ · Plugin Helper</footer>
   </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
