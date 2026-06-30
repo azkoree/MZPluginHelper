@@ -1,5 +1,7 @@
 # MZPluginHelper
-一些自用的方便写长文本+备注标签的工具
+一些自用的方便写长文本+备注标签的工具，适用于游戏文本量大，被默认编辑器制约了创作体验和效率的开发者
+
+只是提升创作效率，不会对游戏文件进行直接修改。
 
 本来只想写一两个，但因为越来越多所以就整合到一个仓库内了……
 
@@ -21,7 +23,9 @@
 
 **[ItemInfoEditor](https://github.com/azkoree/MZPluginHelper/tree/main/ItemInfoEditor)**
 
-编辑GF_3_ItemInfoWindow格式的道具描述信息。这是付费插件，但是afd暂时访问慢，过段时间再补链接
+编辑GF_3_ItemInfoWindow格式的道具描述信息。这是付费插件
+
+[购买链接](https://ifdian.net/item/2503fca611c311efbfb652540025c377)
 
 **[Text2FrameEditor](https://github.com/azkoree/MZPluginHelper/tree/main/Text2FrameEditor)**
 

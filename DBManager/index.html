@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RMMZ 数据库管理器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header id="toolbar">
+      <div class="toolbar-left">
+        <h1>RMMZ 数据库管理器</h1>
+      </div>
+      <div class="toolbar-actions">
+        <label class="btn" id="loadBtn">
+          <input type="file" id="fileInput" accept=".json" hidden multiple>
+          + 加载 JSON
+        </label>
+        <button class="btn" id="exportBtn" disabled>导出当前</button>
+      </div>
+    </header>
+    <nav id="tabBar" class="tab-bar" hidden>
+      <div id="tabList" class="tab-list"></div>
+      <span id="tabFileInfo" class="tab-file-info"></span>
+    </nav>
+    <main id="main">
+      <div id="dropZone" class="drop-zone">
+        <p>拖放 RMMZ 数据库 JSON 文件到这里，或点击「+ 加载 JSON」</p>
+        <p class="sub">支持：Actors · Items · Skills · Weapons · Armors · Enemies · States · Classes</p>
+      </div>
+      <div id="tableContainer" class="table-container" hidden>
+        <div id="tableWrapper" class="table-wrapper">
+          <div id="scrollbarTop" class="scrollbar-top-wrap">
+            <div class="scrollbar-top-track"></div>
+          </div>
+          <div id="tableScroll" class="table-scroll"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+    <div id="arrayModal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title"></span>
+          <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button class="btn" id="modalAddBtn">+ 添加</button>
+          <div class="modal-footer-right">
+            <button class="btn" id="modalCancelBtn">取消</button>
+            <button class="btn btn-primary" id="modalOkBtn">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  <script src="app.js"></script>
+</body>
+</html>
+
+

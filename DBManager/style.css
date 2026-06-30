@@ -1,0 +1,415 @@
+﻿/* === Reset & Base === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 13px;
+  background: #f4f5f9;
+  color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Toolbar === */
+#toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e0e4ed;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+#toolbar h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #c0392b;
+  letter-spacing: 0.3px;
+}
+.toolbar-left { display: flex; align-items: center; gap: 12px; }
+.toolbar-actions { display: flex; align-items: center; gap: 8px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border: 1px solid #d0d5e0;
+  border-radius: 4px;
+  background: #fff;
+  color: #2c3e50;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  user-select: none;
+}
+.btn:hover { background: #f0f2f7; border-color: #c0392b; color: #c0392b; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:disabled:hover { background: #fff; border-color: #d0d5e0; color: #2c3e50; }
+
+/* === Tab Bar === */
+#tabBar {
+  display: flex;
+  align-items: center;
+  background: #eef0f5;
+  border-bottom: 1px solid #dce0e8;
+  padding: 0 12px;
+  flex-shrink: 0;
+  min-height: 36px;
+}
+.tab-list {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  overflow-x: auto;
+  flex: 1;
+}
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 5px 12px;
+  border: 1px solid #d0d5e0;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: #e4e6ec;
+  color: #5a6a7a;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: background 0.12s, color 0.12s;
+  margin-top: 4px;
+}
+.tab:hover { background: #daddf0; color: #2c3e50; }
+.tab.active {
+  background: #fff;
+  color: #c0392b;
+  font-weight: 600;
+  border-color: #d0d5e0;
+  margin-top: 0;
+  padding-top: 7px;
+  position: relative;
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #fff;
+}
+.tab .tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 50%;
+  color: #8899aa;
+  transition: background 0.1s, color 0.1s;
+}
+.tab .tab-close:hover {
+  background: #d0d5e0;
+  color: #c0392b;
+}
+.tab-file-info {
+  font-size: 12px;
+  color: #8899aa;
+  margin-left: 16px;
+  flex-shrink: 0;
+}
+
+/* === Drop Zone === */
+#dropZone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #c0c6d4;
+  margin: 24px;
+  border-radius: 8px;
+  color: #8899aa;
+  transition: border-color 0.2s, background 0.2s;
+  background: #fafbfd;
+}
+#dropZone.drag-over { border-color: #c0392b; background: rgba(192,57,43,0.05); }
+#dropZone p { font-size: 16px; margin-bottom: 6px; color: #5a6a7a; }
+#dropZone .sub { font-size: 12px; color: #9aaabc; }
+
+/* === Table Container === */
+#tableContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#tableWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0 8px 8px 8px;
+  border: 1px solid #e0e4ed;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* scrollbar top — just the thin track */
+.scrollbar-top-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  height: 10px;
+}
+.scrollbar-top-wrap::-webkit-scrollbar {
+  height: 8px;
+}
+.scrollbar-top-wrap::-webkit-scrollbar-track {
+  background: #f0f2f7;
+}
+.scrollbar-top-wrap::-webkit-scrollbar-thumb {
+  background: #c0c6d4;
+  border-radius: 4px;
+}
+.scrollbar-top-wrap::-webkit-scrollbar-thumb:hover {
+  background: #a0a8b8;
+}
+.scrollbar-top-track {
+  height: 1px;
+}
+
+/* table scroll area */
+.table-scroll {
+  flex: 1;
+  overflow: auto;
+}
+.table-scroll::-webkit-scrollbar { width: 8px; height: 0; }
+.table-scroll::-webkit-scrollbar-track { background: #f4f5f9; }
+.table-scroll::-webkit-scrollbar-thumb { background: #d0d5e0; border-radius: 4px; }
+.table-scroll::-webkit-scrollbar-thumb:hover { background: #b0b8c8; }
+
+#dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+/* === Header row 1: field names === */
+#dataTable th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #f0f2f7;
+  color: #a04030;
+  font-weight: 600;
+  padding: 6px 10px 2px 10px;
+  text-align: left;
+  border-bottom: none;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+#dataTable th:hover { background: #e6e8f0; }
+#dataTable th.id-col { color: #8899aa; width: 40px; font-weight: 400; }
+
+/* === Header row 2: Chinese labels === */
+#dataTable th.label-row {
+  position: sticky;
+  top: 24px; /* below the first header row */
+  z-index: 2;
+  background: #f8f9fc;
+  color: #667788;
+  font-weight: 400;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 1px 10px 4px 10px;
+  border-bottom: 1px solid #dce0e8;
+  cursor: default;
+}
+#dataTable th.label-row.id-col { color: #8899aa; }
+#dataTable th.label-row:hover { background: #f8f9fc; }
+
+#dataTable td {
+  padding: 3px 10px;
+  border-bottom: 1px solid #eef0f5;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#dataTable tr:hover td { background: #f8f9fc; }
+#dataTable td.name-col { color: #2980b9; font-weight: 500; }
+#dataTable td.id-col { color: #8899aa; text-align: center; }
+
+/* === Editable Cells === */
+#dataTable td[contenteditable="true"] {
+  cursor: text;
+  outline: none;
+  border-radius: 2px;
+  transition: background 0.1s;
+}
+#dataTable td[contenteditable="true"]:focus {
+  background: rgba(192,57,43,0.06);
+  box-shadow: inset 0 0 0 1px #c0392b;
+}
+#dataTable td.cell-modified {
+  background: rgba(192,57,43,0.05);
+}
+#dataTable td.cell-array,
+#dataTable td.cell-object {
+  color: #8e44ad;
+  font-style: italic;
+  cursor: default;
+}
+
+/* === Row Actions === */
+#dataTable td.row-actions {
+  padding: 2px 4px;
+  text-align: center;
+}
+#dataTable td.row-actions button {
+  background: none;
+  border: 1px solid #d0d5e0;
+  color: #8899aa;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  transition: all 0.1s;
+}
+#dataTable td.row-actions button:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+  background: rgba(192,57,43,0.06);
+}
+
+/* === Hidden === */
+[hidden] { display: none !important; }
+
+/* === Tooltip === */
+.cell-tip {
+  position: relative;
+  cursor: help;
+}
+.cell-tip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: #2c3e50;
+  border: 1px solid #1a252f;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #f0f2f7;
+  white-space: pre-wrap;
+  z-index: 10;
+  max-width: 400px;
+  word-break: break-all;
+}
+
+
+/* === Modal (Array Editor) === */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(44,62,80,0.45);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e0e4ed;
+  flex-shrink: 0;
+}
+.modal-title { font-size: 15px; font-weight: 700; color: #c0392b; }
+.modal-close {
+  font-size: 20px; color: #8899aa; cursor: pointer; line-height: 1; padding: 0 4px;
+}
+.modal-close:hover { color: #c0392b; }
+.modal-body {
+  flex: 1; overflow: auto; padding: 12px 20px; min-height: 100px;
+}
+.modal-empty {
+  text-align: center; color: #9aaabc; padding: 40px 0; font-size: 13px;
+}
+.modal-table-wrap { overflow-x: auto; }
+.modal-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+  white-space: nowrap; min-width: max-content;
+}
+.modal-table th {
+  position: sticky; top: 0; z-index: 3; background: #f0f2f7;
+  color: #a04030; font-weight: 600; padding: 5px 10px 2px;
+  text-align: left; border-bottom: none; user-select: none;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.modal-table th.label-row {
+  top: 22px; z-index: 2; background: #f8f9fc; color: #667788;
+  font-weight: 400; font-size: 11px; text-transform: none;
+  letter-spacing: 0; padding: 1px 10px 4px; border-bottom: 1px solid #dce0e8;
+}
+.modal-table th.id-col { color: #8899aa; font-weight: 400; width: 36px; }
+.modal-table td {
+  padding: 3px 10px; border-bottom: 1px solid #eef0f5;
+  max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+}
+.modal-table tr:hover td { background: #f8f9fc; }
+.modal-table td[contenteditable="true"] {
+  cursor: text; outline: none; border-radius: 2px; transition: background 0.1s;
+}
+.modal-table td[contenteditable="true"]:focus {
+  background: rgba(192,57,43,0.06); box-shadow: inset 0 0 0 1px #c0392b;
+}
+.modal-table td.id-col { color: #8899aa; text-align: center; }
+.modal-table td.row-actions { padding: 2px 6px; text-align: center; }
+.modal-table td.row-actions button {
+  background: none; border: 1px solid #d0d5e0; color: #8899aa;
+  cursor: pointer; font-size: 11px; padding: 1px 6px; border-radius: 3px;
+  transition: all 0.1s;
+}
+.modal-table td.row-actions button:hover {
+  border-color: #c0392b; color: #c0392b; background: rgba(192,57,43,0.06);
+}
+.modal-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px; border-top: 1px solid #e0e4ed; gap: 8px; flex-shrink: 0;
+}
+.modal-footer-right { display: flex; gap: 8px; }
+.modal-footer .btn-primary {
+  background: #c0392b; border-color: #c0392b; color: #fff;
+}
+.modal-footer .btn-primary:hover { background: #a93226; border-color: #a93226; }
+
+/* editable primitive array (JSON inline) */
+#dataTable td.cell-array-json {
+  color: inherit;
+  font-style: normal;
+  cursor: text;
+}
+
