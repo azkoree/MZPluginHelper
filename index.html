@@ -6,15 +6,14 @@
   <title>MZ Plugin Helper</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-      background: #f2f4f8;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
+      background: #f8f9fc;
       color: #1e293b;
       min-height: 100vh;
       display: flex;
@@ -23,65 +22,69 @@
       justify-content: center;
       padding: 2rem 1.5rem;
       background-image:
-        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(37, 99, 235, 0.035) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 50% at 50% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 70%);
+        radial-gradient(ellipse 70% 50% at 50% 35%, rgba(59, 130, 246, 0.04) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 45% at 50% 80%, rgba(217, 119, 6, 0.035) 0%, transparent 65%);
     }
 
     .container {
-      max-width: 720px;
+      max-width: 740px;
       width: 100%;
     }
 
+    /* ── header ── */
     header {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
 
     .emblem {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       margin-bottom: 1.25rem;
-      box-shadow: 0 0 30px rgba(217, 119, 6, 0.2);
+      box-shadow: 0 4px 16px rgba(217, 119, 6, 0.2);
     }
     .emblem svg {
-      width: 28px;
-      height: 28px;
-      color: #ffffff;
+      width: 26px;
+      height: 26px;
+      color: #fff;
     }
 
     h1 {
-      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 2rem;
       font-weight: 700;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       color: #0f172a;
       margin-bottom: 0.5rem;
     }
-    h1 .highlight {
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    h1 .accent {
+      color: #d97706;
     }
 
     .sub {
       font-size: 0.925rem;
       color: #6b7280;
       font-weight: 400;
-      letter-spacing: 0.02em;
     }
 
+    /* ── grid ── */
     .grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 0.875rem;
     }
+    @media (max-width: 780px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+    }
 
+    /* ── card ── */
     .card {
       position: relative;
       background: #ffffff;
@@ -93,10 +96,8 @@
       align-items: center;
       gap: 0.875rem;
       overflow: hidden;
-      outline: 1px solid transparent;
-      outline-offset: 2px;
       transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
     }
     .card::before {
       content: '';
@@ -111,13 +112,14 @@
     .card:hover {
       background: #f8fafc;
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.07);
     }
     .card:hover::before {
       width: 4px;
     }
     .card:focus-visible {
-      outline-color: #d97706;
+      outline: 2px solid #d97706;
+      outline-offset: 2px;
     }
 
     .card--plugin::before  { background: #3b82f6; }
@@ -126,6 +128,7 @@
     .card--iteminfo::before{ background: #ec4899; }
     .card--text2frame::before{ background: #06b6d4; }
     .card--db::before      { background: #8b5cf6; }
+    .card--story::before   { background: #f59e0b; }
 
     .card-icon {
       flex-shrink: 0;
@@ -141,12 +144,13 @@
       width: 20px;
       height: 20px;
     }
-    .card--plugin .card-icon  { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-    .card--note .card-icon    { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .card--glossary .card-icon{ background: rgba(217, 119, 6, 0.1); color: #d97706; }
-    .card--iteminfo .card-icon{ background: rgba(236, 72, 153, 0.1); color: #ec4899; }
-    .card--text2frame .card-icon{ background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
-    .card--db .card-icon      { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+    .card--plugin .card-icon  { background: rgba(59,130,246,0.1); color: #3b82f6; }
+    .card--note .card-icon    { background: rgba(16,185,129,0.1); color: #10b981; }
+    .card--glossary .card-icon{ background: rgba(217,119,6,0.1); color: #d97706; }
+    .card--iteminfo .card-icon{ background: rgba(236,72,153,0.1); color: #ec4899; }
+    .card--text2frame .card-icon{ background: rgba(6,182,212,0.1); color: #06b6d4; }
+    .card--db .card-icon      { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+    .card--story .card-icon   { background: rgba(245,158,11,0.1); color: #f59e0b; }
 
     .card:hover .card-icon {
       transform: scale(1.05);
@@ -159,7 +163,6 @@
     .card-name {
       font-size: 0.9375rem;
       font-weight: 600;
-      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
       letter-spacing: -0.01em;
       color: #0f172a;
     }
@@ -168,6 +171,11 @@
       color: #6b7280;
       margin-top: 0.2rem;
       line-height: 1.45;
+      min-height: 1.45em;
+    }
+    .card-desc:empty::before {
+      content: "···";
+      color: #cbd5e1;
     }
 
     .card-arrow {
@@ -183,19 +191,19 @@
     }
     .card:hover .card-arrow {
       color: #d97706;
-      background: rgba(217, 119, 6, 0.08);
+      background: rgba(217,119,6,0.08);
       transform: translateX(2px);
     }
 
+    /* ── footer ── */
     footer {
-      margin-top: 3rem;
+      margin-top: 2.5rem;
       font-size: 0.8rem;
       color: #9ca3af;
       text-align: center;
     }
 
     @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
       body { padding: 1.5rem 1rem; }
       h1 { font-size: 1.625rem; }
       header { margin-bottom: 2rem; }
@@ -210,9 +218,9 @@
   <div class="container">
     <header>
       <div class="emblem" aria-hidden="true">
-        <i data-lucide="wrench" style="width:28px;height:28px;"></i>
+        <i data-lucide="wrench" style="width:26px;height:26px;"></i>
       </div>
-      <h1>MZ <span class="highlight">Plugin Helper</span></h1>
+      <h1>MZ <span class="accent">Plugin Helper</span></h1>
       <p class="sub">RPG Maker MZ 插件辅助工具集</p>
     </header>
 
@@ -221,7 +229,7 @@
         <div class="card-icon"><i data-lucide="file-code"></i></div>
         <div class="card-body">
           <div class="card-name">PluginDescEditor</div>
-          <div class="card-desc">导入插件描述和参数文本，可进行批量替换并导出</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
         </div>
         <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
@@ -230,7 +238,7 @@
         <div class="card-icon"><i data-lucide="sticky-note"></i></div>
         <div class="card-body">
           <div class="card-name">Notehelper</div>
-          <div class="card-desc">快速导入插件标签，点击即插入的备注编辑器</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
         </div>
         <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
@@ -239,7 +247,7 @@
         <div class="card-icon"><i data-lucide="book-open"></i></div>
         <div class="card-body">
           <div class="card-name">GlossaryEditor</div>
-          <div class="card-desc">SceneGlossary 外部 JSON 可视化编辑器</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
         </div>
         <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
@@ -248,7 +256,7 @@
         <div class="card-icon"><i data-lucide="info"></i></div>
         <div class="card-body">
           <div class="card-name">ItemInfoEditor</div>
-          <div class="card-desc">GF_3_ItemInfoWindow 格式道具信息可视化编写与预览</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
         </div>
         <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
@@ -257,7 +265,7 @@
         <div class="card-icon"><i data-lucide="align-left"></i></div>
         <div class="card-body">
           <div class="card-name">Text2FrameEditor</div>
-          <div class="card-desc">Text2Frame 格式文本编辑器</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
         </div>
         <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>
@@ -266,7 +274,16 @@
         <div class="card-icon"><i data-lucide="database"></i></div>
         <div class="card-body">
           <div class="card-name">DBManager</div>
-          <div class="card-desc">表格式数据库管理器</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
+        </div>
+        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
+      </a>
+
+      <a class="card card--story" href="StoryPlanner/index.html">
+        <div class="card-icon"><i data-lucide="film"></i></div>
+        <div class="card-body">
+          <div class="card-name">StoryPlanner</div>
+          <div class="card-desc"><!-- 在此填写简介 --></div>
         </div>
         <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
       </a>

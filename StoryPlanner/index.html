@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoryPlanner — RPG 剧情大纲规划器</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    StoryPlanner
+  </div>
+  <input class="topbar-title" id="projectTitle" placeholder="未命名项目…" value="未命名项目">
+  <div class="topbar-actions">
+    <button class="btn" onclick="App.exportProject()" title="导出 JSON">📤 导出</button>
+    <button class="btn" onclick="App.importProject()" title="导入 JSON">📥 导入</button>
+    <button class="btn" onclick="App.exportOutline()" title="导出大纲文本">📝 大纲</button>
+    <button class="btn btn--danger" onclick="App.resetAll()" title="清空全部数据">🗑 清空</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="main">
+
+  <!-- LEFT: SCENE TREE -->
+  <div class="scene-panel-wrapper">
+  <div class="scene-panel">
+    <div class="panel-header">
+      <span>📋 场景列表</span>
+      <div style="display:flex;gap:4px;">
+        <button class="btn" onclick="App.addChapter()" title="添加章节">+章</button>
+        <button class="btn" onclick="App.addScene()" title="添加场景">+场</button>
+      </div>
+    </div>
+    <div class="scene-list" id="sceneList"></div>
+  </div>
+  <button class="panel-toggle" onclick="App.toggleScenePanel()" title="折叠场景列表">◀</button>
+  </div>
+
+  <!-- CENTER: METADATA + PALETTE -->
+  <div class="center-panel">
+    <div class="meta-section" id="metaSection">
+      <div class="meta-tabs" id="metaTabs">
+        <span class="meta-tab active" onclick="App.switchMetaTab('meta')">📝 元数据</span>
+        <span class="meta-tab" onclick="App.switchMetaTab('system')">🔌 开关/变量</span>
+      </div>
+      <div id="tabMeta">
+        <div class="meta-row" id="metaFields">
+          <div class="meta-field">
+            <label>场景名称</label>
+            <input id="metaName" placeholder="例：王都初见" oninput="App.onMetaChange()">
+          </div>
+          <div class="meta-field">
+            <label>地图 / 位置</label>
+            <input id="metaMap" placeholder="例：Map012 王都・正門前" oninput="App.onMetaChange()">
+          </div>
+          <div class="meta-field">
+            <label>BGM</label>
+            <input id="metaBGM" placeholder="例：Field1" oninput="App.onMetaChange()">
+          </div>
+          <div class="meta-field">
+            <label>出场角色（回车添加）</label>
+            <div class="tag-area" id="metaChars"></div>
+          </div>
+          <div class="meta-field">
+            <label>标签（回车添加）</label>
+            <div class="tag-area" id="metaTags"></div>
+          </div>
+          <div class="meta-field">
+            <label>备注</label>
+            <textarea id="metaNote" placeholder="场景概要、承上启下…" oninput="App.onMetaChange()"></textarea>
+          </div>
+        </div>
+      </div>
+      <div id="tabSystem" style="display:none">
+        <div class="drop-zone" id="systemDropZone" ondragover="App.onSysDragOver(event)" ondragleave="App.onSysDragLeave(event)" ondrop="App.onSysDrop(event)" onclick="App.onSysClick()">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p>拖入 system.json<br>或点击选择文件</p>
+        </div>
+        <div id="systemContent" style="display:none">
+          <div class="sys-tabs">
+            <span class="sys-tab active" onclick="App.switchSysTab('switches')">🔘 开关</span>
+            <span class="sys-tab" onclick="App.switchSysTab('variables')">🔢 变量</span>
+          </div>
+          <div class="sys-stats" id="sysStats"></div>
+          <div class="sys-list" id="sysList"></div>
+          <div class="sys-pagination" id="sysPagination"></div>
+        </div>
+      </div>
+      <input type="file" id="systemFileInput" style="display:none" accept=".json" onchange="App.handleSysFile(event)">
+    </div>
+
+    <div class="palette-section">
+      <h3>➕ 指令面板</h3>
+      <div class="palette-group">
+        <div class="palette-group-title">💬 叙事</div>
+        <div class="palette-cmd" onclick="App.insertCommand('dialogue')">
+          <span class="cmd-dot cmd-dot--dialogue"></span> 显示文字
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('expression')">
+          <span class="cmd-dot cmd-dot--expression"></span> 更改表情
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('comment')">
+          <span class="cmd-dot cmd-dot--comment"></span> 注释 / TODO
+        </div>
+      </div>
+      <div class="palette-group">
+        <div class="palette-group-title">🎬 演出</div>
+        <div class="palette-cmd" onclick="App.insertCommand('fadein')">
+          <span class="cmd-dot cmd-dot--fade"></span> 淡入画面
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('fadeout')">
+          <span class="cmd-dot cmd-dot--fade"></span> 淡出画面
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('wait')">
+          <span class="cmd-dot cmd-dot--wait"></span> 等待
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('move')">
+          <span class="cmd-dot cmd-dot--move"></span> 移动路线
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('cg')">
+          <span class="cmd-dot cmd-dot--cg"></span> CG 演出
+        </div>
+      </div>
+      <div class="palette-group">
+        <div class="palette-group-title">🎵 音频</div>
+        <div class="palette-cmd" onclick="App.insertCommand('bgm')">
+          <span class="cmd-dot cmd-dot--audio"></span> 播放 BGM
+        </div>
+        <div class="palette-cmd" onclick="App.insertCommand('se')">
+          <span class="cmd-dot cmd-dot--audio"></span> 播放 SE
+        </div>
+      </div>
+      <div class="palette-group">
+        <div class="palette-group-title">🔀 逻辑</div>
+        <div class="palette-cmd" onclick="App.insertCommand('branch')">
+          <span class="cmd-dot cmd-dot--branch"></span> 条件分支
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: COMMAND LIST -->
+  <div class="cmd-panel" id="cmdPanel">
+    <div class="cmd-panel-header">
+      <h3>◆ <span class="scene-title-display" id="sceneTitleDisplay">未选择场景</span></h3>
+      <span style="font-size:0.7rem;color:var(--text-muted);" id="cmdCount"></span>
+    </div>
+    <div class="cmd-list" id="cmdList">
+      <div class="no-scene" id="noSceneHint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+        <p>👈 从左侧选择一个场景<br>然后在指令面板中点击插入演出指令</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INLINE COMMAND EDITOR (hidden) -->
+<div class="cmd-editor-overlay" id="cmdEditorOverlay" style="display:none;" onclick="if(event.target===this) App.closeEditor()">
+  <div class="cmd-editor" id="cmdEditor"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- Hidden file input for import -->
+<input type="file" id="importFile" style="display:none" accept=".json" onchange="App.handleImport(event)">
+
+<script src="js/app.js"></script>
+</body>
+</html>

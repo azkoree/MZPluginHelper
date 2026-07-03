@@ -1,4 +1,5 @@
 # MZPluginHelper
+
 一些自用的方便写长文本+备注标签的工具，适用于游戏文本量大，被默认编辑器制约了创作体验和效率的开发者
 
 只是提升创作效率，不会对游戏文件进行直接修改。
@@ -30,6 +31,14 @@
 **[Text2FrameEditor](https://github.com/azkoree/MZPluginHelper/tree/main/Text2FrameEditor)**
 
 [Text2Frame](https://github.com/yktsr/Text2Frame-MV)插件格式的文本编辑器，可以将txt转换为事件命令，具体用法请务必看原插件的readme！（可以直接在本文件夹下插件本体）
+
+**[DBManager](https://github.com/azkoree/MZPluginHelper/tree/main/DBManager)**
+
+丐中丐的数据库编辑器，类似官方工具导出的表格形式。请谨慎使用，以免出现无法预料的后果。。
+
+**[StoryPlanner](https://github.com/azkoree/MZPluginHelper/tree/main/StoryPlanner)**
+
+做得跟mz事件编辑器差不多的演出规划工具，我也不知道有什么用，大概只是好玩。。
 
 ## 本地使用
 
