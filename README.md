@@ -36,6 +36,10 @@
 
 丐中丐的数据库编辑器，类似官方工具导出的表格形式。请谨慎使用，以免出现无法预料的后果。。
 
+**[DatabaseNoter](https://github.com/azkoree/MZPluginHelper/tree/main/DatabaseNoter)**
+
+只改备注的编辑器，两个框里的备注在导出时会合到一起，如果使用备注来设定属性，可以试一试
+
 **[StoryPlanner](https://github.com/azkoree/MZPluginHelper/tree/main/StoryPlanner)**
 
 做得跟mz事件编辑器差不多的演出规划工具，我也不知道有什么用，大概只是好玩。。
