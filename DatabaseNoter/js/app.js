@@ -246,10 +246,13 @@ function renderSidebar() {
 /** 当前高亮的条目 id（用于导航高亮） */
 let activeEntryId = null;
 
+/**
+ * 渲染标签页栏 + 所有文件面板（一次性渲染，之后切换标签页只改 CSS 不重建 DOM）
+ */
 function renderEditor() {
-  const fileName = state.currentFile;
+  const fileNames = Object.keys(state.files).sort();
 
-  if (!fileName || !state.files[fileName]) {
+  if (fileNames.length === 0) {
     editorArea.innerHTML = `
       <div class="editor-placeholder">
         <p>请先导入数据库 JSON 文件</p>
@@ -258,42 +261,90 @@ function renderEditor() {
     return;
   }
 
-  const fileData = state.files[fileName];
+  // 确保 currentFile 有效
+  if (!state.currentFile || !state.files[state.currentFile]) {
+    state.currentFile = fileNames[0];
+  }
+
   let html = '';
 
-  for (const entry of fileData.entries) {
-    const idStr = String(entry.id).padStart(3, '0');
-    const name = entry.name || '（无名称）';
-    const collapsed = collapsedEntries[fileName] && collapsedEntries[fileName].has(entry.id);
+  // 标签页栏
+  html += '<div class="tab-bar">';
+  for (const fileName of fileNames) {
+    const activeClass = fileName === state.currentFile ? ' active' : '';
+    html += `<button class="tab${activeClass}" data-action="switch-tab" data-file="${escapeHtml(fileName)}">${escapeHtml(fileName)}.json</button>`;
+  }
+  html += '</div>';
 
-    html += `<div class="entry-card${collapsed ? ' collapsed' : ''}" id="entry-${escapeHtml(fileName)}-${entry.id}" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
+  // 文件面板
+  for (const fileName of fileNames) {
+    const fileData = state.files[fileName];
+    const hidden = fileName !== state.currentFile ? ' hidden' : '';
 
-    // 标题栏
-    html += `<div class="entry-header" data-action="toggle-entry" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
-    html += `<span class="collapse-icon">${collapsed ? '▶' : '▼'}</span>`;
-    html += `<span class="entry-id">${idStr}</span>`;
-    html += `<span class="entry-name">${escapeHtml(name)}</span>`;
-    if (entry.importHint) {
-      html += `<span class="import-hint" title="导入时未能识别格式，原备注内容已全部放入描述框">⚠ 旧格式</span>`;
+    html += `<div class="file-panel${hidden}" data-panel="${escapeHtml(fileName)}">`;
+
+    for (const entry of fileData.entries) {
+      const idStr = String(entry.id).padStart(3, '0');
+      const name = entry.name || '（无名称）';
+      const collapsed = collapsedEntries[fileName] && collapsedEntries[fileName].has(entry.id);
+
+      html += `<div class="entry-card${collapsed ? ' collapsed' : ''}" id="entry-${escapeHtml(fileName)}-${entry.id}" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
+
+      // 标题栏
+      html += `<div class="entry-header" data-action="toggle-entry" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
+      html += `<span class="collapse-icon">${collapsed ? '▶' : '▼'}</span>`;
+      html += `<span class="entry-id">${idStr}</span>`;
+      html += `<span class="entry-name">${escapeHtml(name)}</span>`;
+      if (entry.importHint) {
+        html += `<span class="import-hint" title="导入时未能识别格式，原备注内容已全部放入描述框">⚠ 旧格式</span>`;
+      }
+      html += `</div>`;
+
+      // 正文
+      html += `<div class="entry-body">`;
+      html += `<div class="note-group">`;
+      html += `<label>属性配置</label>`;
+      html += `<textarea data-field="configNote" data-file="${escapeHtml(fileName)}" data-id="${entry.id}" placeholder="在此输入属性配置...">${escapeHtml(entry.configNote)}</textarea>`;
+      html += `</div>`;
+      html += `<div class="note-group">`;
+      html += `<label>物品描述</label>`;
+      html += `<textarea data-field="descNote" data-file="${escapeHtml(fileName)}" data-id="${entry.id}" placeholder="在此输入物品描述...">${escapeHtml(entry.descNote)}</textarea>`;
+      html += `</div>`;
+      html += `</div>`;
+
+      html += `</div>`;
     }
-    html += `</div>`;
 
-    // 正文
-    html += `<div class="entry-body">`;
-    html += `<div class="note-group">`;
-    html += `<label>属性配置</label>`;
-    html += `<textarea data-field="configNote" data-file="${escapeHtml(fileName)}" data-id="${entry.id}" placeholder="在此输入属性配置...">${escapeHtml(entry.configNote)}</textarea>`;
-    html += `</div>`;
-    html += `<div class="note-group">`;
-    html += `<label>物品描述</label>`;
-    html += `<textarea data-field="descNote" data-file="${escapeHtml(fileName)}" data-id="${entry.id}" placeholder="在此输入物品描述...">${escapeHtml(entry.descNote)}</textarea>`;
-    html += `</div>`;
-    html += `</div>`;
-
-    html += `</div>`;
+    html += '</div>';
   }
 
   editorArea.innerHTML = html;
+}
+
+/**
+ * 切换到指定标签页（不改建 DOM，只切换 CSS 状态）
+ */
+function switchTab(fileName) {
+  if (!state.files[fileName]) return;
+  if (state.currentFile === fileName) return;  // 已经是当前页
+
+  state.currentFile = fileName;
+
+  // 更新标签页样式
+  const tabs = editorArea.querySelectorAll('.tab');
+  for (const tab of tabs) {
+    tab.classList.toggle('active', tab.dataset.file === fileName);
+  }
+
+  // 切换面板显示
+  const panels = editorArea.querySelectorAll('.file-panel');
+  for (const panel of panels) {
+    panel.hidden = panel.dataset.panel !== fileName;
+  }
+
+  // 更新侧边栏高亮和按钮状态
+  renderSidebar();
+  updateExportButton();
 }
 
 /** 条目折叠状态：{ fileName: Set<entryId> } */
@@ -339,10 +390,9 @@ sidebarNav.addEventListener('click', (e) => {
       break;
     }
     case 'go-entry': {
-      // 切换文件视图
+      // 切换到对应标签页
       if (state.currentFile !== fileName) {
-        state.currentFile = fileName;
-        renderEditor();
+        switchTab(fileName);
       }
       // 滚动到对应条目
       activeEntryId = entryId;
@@ -361,17 +411,19 @@ sidebarNav.addEventListener('click', (e) => {
   }
 });
 
-/** 点击编辑区域 */
+/** 点击编辑区域（标签页 / 条目折叠） */
 editorArea.addEventListener('click', (e) => {
   const target = e.target.closest('[data-action]');
   if (!target) return;
 
   const action = target.dataset.action;
   const fileName = target.dataset.file;
-  const entryId = Number(target.dataset.id);
+  const entryId = target.dataset.id ? Number(target.dataset.id) : null;
 
   if (action === 'toggle-entry') {
     toggleEntry(fileName, entryId);
+  } else if (action === 'switch-tab') {
+    switchTab(fileName);
   }
 });
 
