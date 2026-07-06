@@ -1,310 +1,916 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MZ Plugin Helper</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工具箱 — MZ Plugin Helper</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+/* ========================================
+   Reset & Variables
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
-      background: #f8f9fc;
-      color: #1e293b;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem;
-      background-image:
-        radial-gradient(ellipse 70% 50% at 50% 35%, rgba(59, 130, 246, 0.04) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 45% at 50% 80%, rgba(217, 119, 6, 0.035) 0%, transparent 65%);
-    }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
-    .container {
-      max-width: 740px;
-      width: 100%;
-    }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  display: flex;
+  min-height: 100vh;
+  line-height: 1.6;
+}
 
-    /* ── header ── */
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
+:root {
+  --bg-page:        #F6F3EF;
+  --bg-surface:     #FFFFFF;
+  --bg-sidebar:     #FFFFFF;
+  --bg-hover:       #F0EBE4;
+  --bg-active:      #E9E2DA;
+  --text-primary:   #2D2D3F;
+  --text-secondary: #787890;
+  --text-muted:     #A5A5B8;
+  --accent:         #4B6E8E;
+  --accent-copper:  #C97B57;
+  --accent-copper-dim: #D9A085;
+  --border:         #E6DFD8;
+  --border-light:   #F0EBE4;
+  --category:       #9393A8;
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md:      0 4px 12px rgba(0,0,0,0.06);
+  --radius:         10px;
+  --sidebar-w:      248px;
+}
 
-    .emblem {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      margin-bottom: 1.25rem;
-      box-shadow: 0 4px 16px rgba(217, 119, 6, 0.2);
-    }
-    .emblem svg {
-      width: 26px;
-      height: 26px;
-      color: #fff;
-    }
+/* ========================================
+   Sidebar
+   ======================================== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
 
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #0f172a;
-      margin-bottom: 0.5rem;
-    }
-    h1 .accent {
-      color: #d97706;
-    }
+.sidebar-header {
+  padding: 24px 20px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
 
-    .sub {
-      font-size: 0.925rem;
-      color: #6b7280;
-      font-weight: 400;
-    }
+.sidebar-header h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    /* ── grid ── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.875rem;
-    }
-    @media (max-width: 780px) {
-      .grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
-    }
+.sidebar-header h1 .logo-emoji {
+  font-size: 1.3rem;
+  line-height: 1;
+}
 
-    /* ── card ── */
-    .card {
-      position: relative;
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 1.125rem 1.125rem 1.125rem 1.25rem;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      align-items: center;
-      gap: 0.875rem;
-      overflow: hidden;
-      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 3px;
-      height: 100%;
-      border-radius: 3px 0 0 3px;
-      transition: width 0.2s ease;
-    }
-    .card:hover {
-      background: #f8fafc;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.07);
-    }
-    .card:hover::before {
-      width: 4px;
-    }
-    .card:focus-visible {
-      outline: 2px solid #d97706;
-      outline-offset: 2px;
-    }
+.sidebar-header .subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
 
-    .card--plugin::before  { background: #3b82f6; }
-    .card--note::before    { background: #10b981; }
-    .card--glossary::before{ background: #d97706; }
-    .card--iteminfo::before{ background: #ec4899; }
-    .card--text2frame::before{ background: #06b6d4; }
-    .card--db::before      { background: #8b5cf6; }
-    .card--dbnote::before  { background: #6366f1; }
-    .card--story::before   { background: #f59e0b; }
+.nav-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0 20px;
+}
 
-    .card-icon {
-      flex-shrink: 0;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease;
-    }
-    .card-icon svg {
-      width: 20px;
-      height: 20px;
-    }
-    .card--plugin .card-icon  { background: rgba(59,130,246,0.1); color: #3b82f6; }
-    .card--note .card-icon    { background: rgba(16,185,129,0.1); color: #10b981; }
-    .card--glossary .card-icon{ background: rgba(217,119,6,0.1); color: #d97706; }
-    .card--iteminfo .card-icon{ background: rgba(236,72,153,0.1); color: #ec4899; }
-    .card--text2frame .card-icon{ background: rgba(6,182,212,0.1); color: #06b6d4; }
-    .card--db .card-icon      { background: rgba(139,92,246,0.1); color: #8b5cf6; }
-    .card--dbnote .card-icon  { background: rgba(99,102,241,0.1); color: #6366f1; }
-    .card--story .card-icon   { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.nav-wrap::-webkit-scrollbar { width: 4px; }
+.nav-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    .card:hover .card-icon {
-      transform: scale(1.05);
-    }
+/* Category label */
+.nav-category {
+  padding: 14px 20px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--category);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  user-select: none;
+}
 
-    .card-body {
-      flex: 1;
-      min-width: 0;
-    }
-    .card-name {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: #0f172a;
-    }
-    .card-desc {
-      font-size: 0.8rem;
-      color: #6b7280;
-      margin-top: 0.2rem;
-      line-height: 1.45;
-      min-height: 1.45em;
-    }
-    .card-desc:empty::before {
-      content: "···";
-      color: #cbd5e1;
-    }
+/* Nav item */
+.nav-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 20px 8px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s ease, color 0.15s ease;
+  line-height: 1.4;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
 
-    .card-arrow {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #9ca3af;
-      transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-    }
-    .card:hover .card-arrow {
-      color: #d97706;
-      background: rgba(217,119,6,0.08);
-      transform: translateX(2px);
-    }
+.nav-item:hover { background: var(--bg-hover); }
+.nav-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  background: var(--bg-hover);
+}
 
-    /* ── footer ── */
-    footer {
-      margin-top: 2.5rem;
-      font-size: 0.8rem;
-      color: #9ca3af;
-      text-align: center;
-    }
+/* Active indicator — copper dot */
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent-copper);
+  transition: height 0.25s ease;
+}
 
-    @media (max-width: 600px) {
-      body { padding: 1.5rem 1rem; }
-      h1 { font-size: 1.625rem; }
-      header { margin-bottom: 2rem; }
-    }
+.nav-item.active::before {
+  height: 20px;
+}
 
-    @media (prefers-reduced-motion: reduce) {
-      .card, .card-icon, .card-arrow, .card::before { transition: none; }
-    }
-  </style>
+.nav-item.active {
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Indented child item (PDE under PDL) */
+.nav-item.is-child {
+  padding-left: 40px;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.nav-item.is-child::before { left: 20px; }
+
+.nav-item .child-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+/* Expand/collapse toggle on parent items */
+.nav-toggle-area {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+.nav-toggle-area.expanded {
+  transform: rotate(90deg);
+}
+
+.nav-item.is-child-wrap {
+  display: none;
+}
+
+.nav-item.is-child-wrap.open {
+  display: flex;
+}
+
+/* ========================================
+   Main content
+   ======================================== */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-area {
+  flex: 1;
+  padding: 48px 56px;
+  max-width: 900px;
+  width: 100%;
+}
+
+/* Welcome state */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 60vh;
+  color: var(--text-secondary);
+  gap: 12px;
+}
+
+.welcome .welcome-icon {
+  font-size: 3rem;
+  opacity: 0.5;
+}
+
+.welcome h2 {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.welcome p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  max-width: 360px;
+}
+
+/* Tool description pane */
+.tool-pane { display: none; }
+
+.tool-pane.active { display: block; }
+
+.tool-header {
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.tool-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* ========================================
+   Description content (rendered markdown)
+   ======================================== */
+.description-content {
+  font-size: 0.94rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.description-content h1,
+.description-content h2,
+.description-content h3,
+.description-content h4 {
+  color: var(--text-primary);
+  margin: 1.6em 0 0.6em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.description-content h1 { font-size: 1.5rem; border-bottom: none; }
+.description-content h2 { font-size: 1.25rem; }
+.description-content h3 { font-size: 1.1rem; }
+.description-content h4 { font-size: 1rem; }
+
+.description-content h1:first-child { margin-top: 0; }
+
+.description-content p {
+  margin: 0 0 1em;
+}
+
+.description-content ul,
+.description-content ol {
+  margin: 0 0 1em;
+  padding-left: 1.4em;
+}
+
+.description-content li {
+  margin-bottom: 0.3em;
+}
+
+.description-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.description-content a:hover {
+  color: var(--accent-copper);
+}
+
+.description-content blockquote {
+  margin: 0 0 1em;
+  padding: 8px 16px;
+  border-left: 3px solid var(--accent-copper-dim);
+  background: var(--bg-hover);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-secondary);
+}
+
+.description-content code {
+  font-family: "SF Mono", "Fira Code", "Consolas", "Liberation Mono", monospace;
+  font-size: 0.85em;
+  padding: 2px 6px;
+  background: var(--bg-hover);
+  border-radius: 4px;
+  color: var(--text-primary);
+}
+
+.description-content pre {
+  margin: 0 0 1em;
+  padding: 16px 20px;
+  background: var(--bg-hover);
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border: 1px solid var(--border-light);
+}
+
+.description-content pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  border-radius: 0;
+}
+
+.description-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}
+
+.description-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1em;
+  font-size: 0.9rem;
+}
+
+.description-content th,
+.description-content td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.description-content th {
+  background: var(--bg-hover);
+  font-weight: 600;
+}
+
+.description-content img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 0.5em 0;
+}
+
+.description-content strong {
+  font-weight: 700;
+}
+
+/* ========================================
+   Action button
+   ======================================== */
+.tool-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.92rem;
+  font-family: inherit;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-launch:hover {
+  background: var(--accent-copper);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(201,123,87,0.3);
+}
+
+.btn-launch:active {
+  transform: translateY(0);
+}
+
+.btn-launch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.btn-launch .arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.btn-launch:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* ========================================
+   Loading state
+   ======================================== */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 40px 0;
+}
+
+.loading .spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent-copper);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error state */
+.error-msg {
+  color: #b34a4a;
+  background: #fdf0f0;
+  padding: 16px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   Hamburger — mobile
+   ======================================== */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.hamburger:hover { background: var(--bg-hover); }
+.hamburger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.hamburger span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 800px) {
+  :root { --sidebar-w: 220px; }
+  .content-area { padding: 32px 28px; }
+}
+
+@media (max-width: 640px) {
+  .hamburger { display: flex; }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s ease;
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Overlay when sidebar is open on mobile */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.2);
+    z-index: 99;
+  }
+
+  .sidebar-overlay.open {
+    display: block;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .content-area {
+    padding: 24px 20px;
+    padding-top: 68px;
+  }
+
+  .tool-header h2 { font-size: 1.25rem; }
+}
+
+/* ========================================
+   Reduced motion
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="emblem" aria-hidden="true">
-        <i data-lucide="wrench" style="width:26px;height:26px;"></i>
-      </div>
-      <h1>MZ <span class="accent">Plugin Helper</span></h1>
-      <p class="sub">RPG Maker MZ 插件辅助工具集</p>
-    </header>
 
-    <div class="grid">
-      <a class="card card--plugin" href="PluginDescEditor/index.html">
-        <div class="card-icon"><i data-lucide="file-code"></i></div>
-        <div class="card-body">
-          <div class="card-name">PluginDescEditor</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+<!-- ========== Hamburger (mobile) ========== -->
+<button class="hamburger" id="hamburger" aria-label="打开导航">
+  <span></span><span></span><span></span>
+</button>
+<div class="sidebar-overlay" id="overlay"></div>
 
-      <a class="card card--note" href="Notehelper/index.html">
-        <div class="card-icon"><i data-lucide="sticky-note"></i></div>
-        <div class="card-body">
-          <div class="card-name">Notehelper</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+<!-- ========== Sidebar ========== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1><span class="logo-emoji">🧰</span>工具箱</h1>
+    <div class="subtitle">MZ Plugin Helper</div>
+  </div>
+  <nav class="nav-wrap" aria-label="工具导航">
 
-      <a class="card card--glossary" href="GlossaryEditor/index.html">
-        <div class="card-icon"><i data-lucide="book-open"></i></div>
-        <div class="card-body">
-          <div class="card-name">GlossaryEditor</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+    <!-- 插件描述 -->
+    <div class="nav-category">插件描述</div>
+    <button class="nav-item" data-tool="plugin-desc-loader" data-url="PluginDescLoader/index.html" data-hash="PluginDescLoader">
+      <span class="nav-toggle-area" id="toggle-pdl" aria-label="展开子项">▶</span>
+      PluginDescLoader
+    </button>
+    <button class="nav-item is-child is-child-wrap" data-tool="plugin-desc-editor" data-url="PluginDescEditor/index.html" data-hash="PluginDescEditor" data-parent="plugin-desc-loader">
+      PluginDescEditor <span class="child-label">（旧）</span>
+    </button>
 
-      <a class="card card--iteminfo" href="ItemInfoEditor/index.html">
-        <div class="card-icon"><i data-lucide="info"></i></div>
-        <div class="card-body">
-          <div class="card-name">ItemInfoEditor</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+    <!-- 已有插件扩展 -->
+    <div class="nav-category">已有插件扩展</div>
+    <button class="nav-item" data-tool="glossary-editor" data-url="GlossaryEditor/index.html" data-hash="GlossaryEditor">GlossaryEditor</button>
+    <button class="nav-item" data-tool="text2frame-editor" data-url="Text2FrameEditor/index.html" data-hash="Text2FrameEditor">Text2FrameEditor</button>
+    <button class="nav-item" data-tool="item-info-editor" data-url="ItemInfoEditor/index.html" data-hash="ItemInfoEditor">ItemInfoEditor</button>
 
-      <a class="card card--text2frame" href="Text2FrameEditor/index.html">
-        <div class="card-icon"><i data-lucide="align-left"></i></div>
-        <div class="card-body">
-          <div class="card-name">Text2FrameEditor</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+    <!-- 数据库相关 -->
+    <div class="nav-category">数据库相关</div>
+    <button class="nav-item" data-tool="database-noter" data-url="DatabaseNoter/index.html" data-hash="DatabaseNoter">DatabaseNoter</button>
+    <button class="nav-item" data-tool="db-manager" data-url="DBManager/index.html" data-hash="DBManager">DBManager</button>
 
-      <a class="card card--db" href="DBManager/index.html">
-        <div class="card-icon"><i data-lucide="database"></i></div>
-        <div class="card-body">
-          <div class="card-name">DBManager</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+    <!-- 杂项 -->
+    <div class="nav-category">杂项</div>
+    <button class="nav-item" data-tool="story-planner" data-url="StoryPlanner/index.html" data-hash="StoryPlanner">StoryPlanner</button>
 
-      <a class="card card--dbnote" href="DatabaseNoter/index.html">
-        <div class="card-icon"><i data-lucide="file-pen-line"></i></div>
-        <div class="card-body">
-          <div class="card-name">DatabaseNoter</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+  </nav>
+</aside>
 
-      <a class="card card--story" href="StoryPlanner/index.html">
-        <div class="card-icon"><i data-lucide="film"></i></div>
-        <div class="card-body">
-          <div class="card-name">StoryPlanner</div>
-          <div class="card-desc"><!-- 在此填写简介 --></div>
-        </div>
-        <div class="card-arrow"><i data-lucide="chevron-right"></i></div>
-      </a>
+<!-- ========== Main content ========== -->
+<main class="main">
+  <div class="content-area" id="contentArea">
+    <!-- Welcome (default) -->
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🧰</div>
+      <h2>选择一个工具</h2>
+      <p>点击左侧导航栏中的工具名称，查看其说明并跳转使用。</p>
     </div>
 
-    <footer>RPG Maker MZ · Plugin Helper</footer>
+    <!-- Tool panes will be dynamically rendered here -->
+    <div id="toolPane">
+      <div class="tool-pane" id="pane-root">
+        <div class="tool-header">
+          <h2 id="toolTitle"></h2>
+        </div>
+        <div class="description-content" id="descContent"></div>
+        <div class="tool-footer">
+          <a class="btn-launch" id="btnLaunch" href="#" target="_blank" rel="noopener noreferrer">
+            前往使用 <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
+</main>
 
-  <script>
-    lucide.createIcons();
-  </script>
+<script>
+// ========================================
+// Tool data
+// ========================================
+const tools = {
+  'plugin-desc-loader':  { file: 'descriptions/PluginDescLoader.md',  name: 'PluginDescLoader' },
+  'plugin-desc-editor':  { file: 'descriptions/PluginDescEditor.md',  name: 'PluginDescEditor' },
+  'glossary-editor':     { file: 'descriptions/GlossaryEditor.md',    name: 'GlossaryEditor' },
+  'text2frame-editor':   { file: 'descriptions/Text2FrameEditor.md',  name: 'Text2FrameEditor' },
+  'item-info-editor':    { file: 'descriptions/ItemInfoEditor.md',    name: 'ItemInfoEditor' },
+  'database-noter':      { file: 'descriptions/DatabaseNoter.md',     name: 'DatabaseNoter' },
+  'db-manager':          { file: 'descriptions/DBManager.md',         name: 'DBManager' },
+  'story-planner':       { file: 'descriptions/StoryPlanner.md',      name: 'StoryPlanner' },
+};
+
+// ========================================
+// Inline fallback content for file:// protocol
+// (fetch() is blocked when opening the page directly from disk)
+// When editing .md files, update this object too for local testing.
+// On HTTP servers (GitHub Pages, python -m http.server),
+// fetch() works and the .md files are loaded directly.
+// ========================================
+const FALLBACK_CONTENT = {
+  'plugin-desc-loader': `# PluginDescLoader
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 PluginDescLoader \u7684\u5de5\u5177\u8bf4\u660e -->`,
+  'plugin-desc-editor': `# PluginDescEditor
+
+> \u8fd9\u662f PluginDescLoader \u7684\u65e7\u7248\u672c\u3002\u529f\u80fd\u5df2\u88ab PluginDescLoader \u8986\u76d6\uff0c\u5efa\u8bae\u4f7f\u7528\u65b0\u7248\u3002
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 PluginDescEditor \u7684\u5de5\u5177\u8bf4\u660e\uff08\u5982\u4fdd\u7559\u6b64\u9875\u9762\u7684\u7406\u7531\u3001\u548c PDL \u7684\u5dee\u5f02\u7b49\uff09 -->`,
+  'glossary-editor': `# GlossaryEditor
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 GlossaryEditor \u7684\u5de5\u5177\u8bf4\u660e -->`,
+  'text2frame-editor': `# Text2FrameEditor
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 Text2FrameEditor \u7684\u5de5\u5177\u8bf4\u660e -->`,
+  'item-info-editor': `# ItemInfoEditor
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 ItemInfoEditor \u7684\u5de5\u5177\u8bf4\u660e -->`,
+  'database-noter': `# DatabaseNoter
+
+\u7528\u4e8e\u96c6\u4e2d\u4fee\u6539\u6570\u636e\u5e93\u4e2d\u7684\u5907\u6ce8\u4fe1\u606f\uff0c\u63d0\u4f9b\u4e86\u66f4\u5927\u7684\u8f93\u5165\u6846\uff0c\u548c\u4e24\u4e2a\u53ef\u4ee5\u5bfc\u51fa\u65f6\u81ea\u52a8\u62fc\u5408\u7684\u5907\u6ce8\u6846
+
+\u5982\u679c\u5907\u6ce8\u7f16\u5199\u9700\u6c42\u5927\uff0c\u751a\u81f3\u5c5e\u6027\u914d\u7f6e\u90fd\u8981\u5728\u5907\u6ce8\u5b8c\u6210\uff0c\u4e0d\u59a8\u8bd5\u8bd5\u8fd9\u4e2a\u5de5\u5177`,
+  'db-manager': `# DBManager
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 DBManager \u7684\u5de5\u5177\u8bf4\u660e -->`,
+  'story-planner': `# StoryPlanner
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 StoryPlanner \u7684\u5de5\u5177\u8bf4\u660e -->`,
+};
+
+// ========================================
+// DOM refs
+// ========================================
+const sidebar = document.getElementById('sidebar');
+const hamburger = document.getElementById('hamburger');
+const overlay = document.getElementById('overlay');
+const navItems = document.querySelectorAll('.nav-item');
+const welcome = document.getElementById('welcome');
+const toolPane = document.getElementById('pane-root');
+const toolTitle = document.getElementById('toolTitle');
+const descContent = document.getElementById('descContent');
+const btnLaunch = document.getElementById('btnLaunch');
+const togglePdl = document.getElementById('toggle-pdl');
+
+let currentTool = null;
+
+// ========================================
+// Mobile sidebar toggle
+// ========================================
+function toggleSidebar(open) {
+  const isOpen = open !== undefined ? open : !sidebar.classList.contains('open');
+  sidebar.classList.toggle('open', isOpen);
+  hamburger.classList.toggle('open', isOpen);
+  overlay.classList.toggle('open', isOpen);
+  hamburger.setAttribute('aria-label', isOpen ? '关闭导航' : '打开导航');
+}
+
+hamburger.addEventListener('click', () => toggleSidebar());
+overlay.addEventListener('click', () => toggleSidebar(false));
+
+// Close sidebar on ESC
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+    toggleSidebar(false);
+  }
+});
+
+// ========================================
+// Accordion: PluginDescLoader ↔ PluginDescEditor
+// ========================================
+const pdlBtn = document.querySelector('[data-tool="plugin-desc-loader"]');
+const pdeBtn = document.querySelector('[data-tool="plugin-desc-editor"]');
+
+function toggleAccordion(expand) {
+  const shouldOpen = expand !== undefined ? expand : !pdeBtn.classList.contains('open');
+  pdeBtn.classList.toggle('open', shouldOpen);
+  togglePdl.classList.toggle('expanded', shouldOpen);
+}
+
+// ========================================
+// Load tool description
+// ========================================
+async function selectTool(toolId, updateHash = true) {
+  const tool = tools[toolId];
+  if (!tool) return;
+
+  // Update hash
+  if (updateHash) {
+    history.pushState(null, '', '#' + toolIdToHash(toolId));
+  }
+
+  // Deactivate all nav items
+  navItems.forEach(el => el.classList.remove('active'));
+
+  // Activate current
+  const btn = document.querySelector(`[data-tool="${toolId}"]`);
+  if (btn) btn.classList.add('active');
+
+  // Auto-expand if we selected the child
+  if (toolId === 'plugin-desc-editor') {
+    toggleAccordion(true);
+  }
+
+  // Hide welcome, show pane
+  welcome.style.display = 'none';
+  toolPane.classList.add('active');
+
+  // Show loading
+  descContent.innerHTML = '<div class="loading"><div class="spinner"></div>加载中…</div>';
+  toolTitle.textContent = tool.name;
+
+  // Set launch button
+  const urlAttr = btn ? btn.getAttribute('data-url') : '';
+  btnLaunch.href = urlAttr;
+
+  // Fetch and render markdown — try .md file first, fall back to inline
+  try {
+    const res = await fetch(tool.file);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const md = await res.text();
+    descContent.innerHTML = marked.parse(md);
+  } catch (err) {
+    // fetch failed (e.g. file:// protocol blocks it) → use inline fallback
+    const fallbackMd = FALLBACK_CONTENT[toolId];
+    if (fallbackMd) {
+      descContent.innerHTML = marked.parse(fallbackMd);
+    } else {
+      descContent.innerHTML = `<div class="error-msg">⚠️ 无法加载说明文件。<br><br>如果您是直接双击打开的本页，请尝试用本地 HTTP 服务器打开：<br><code>python -m http.server 8000</code><br>然后访问 <code>http://localhost:8000/</code></div>`;
+    }
+  }
+
+  // Close sidebar on mobile after selection
+  if (window.innerWidth <= 640) {
+    toggleSidebar(false);
+  }
+
+  currentTool = toolId;
+}
+
+// ========================================
+// Hash ↔ toolId mapping
+// ========================================
+function hashToToolId(hash) {
+  const map = {
+    'PluginDescLoader': 'plugin-desc-loader',
+    'PluginDescEditor': 'plugin-desc-editor',
+    'GlossaryEditor':   'glossary-editor',
+    'Text2FrameEditor': 'text2frame-editor',
+    'ItemInfoEditor':   'item-info-editor',
+    'DatabaseNoter':    'database-noter',
+    'DBManager':        'db-manager',
+    'StoryPlanner':     'story-planner',
+  };
+  return map[hash] || null;
+}
+
+function toolIdToHash(toolId) {
+  const map = {
+    'plugin-desc-loader': 'PluginDescLoader',
+    'plugin-desc-editor': 'PluginDescEditor',
+    'glossary-editor':    'GlossaryEditor',
+    'text2frame-editor':  'Text2FrameEditor',
+    'item-info-editor':   'ItemInfoEditor',
+    'database-noter':     'DatabaseNoter',
+    'db-manager':         'DBManager',
+    'story-planner':      'StoryPlanner',
+  };
+  return map[toolId] || toolId;
+}
+
+// ========================================
+// Nav click handlers
+// ========================================
+navItems.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const toolId = btn.getAttribute('data-tool');
+
+    // If it's PDL button, toggle accordion
+    if (toolId === 'plugin-desc-loader') {
+      // Toggle the accordion
+      toggleAccordion();
+      // Still select PDL
+      selectTool('plugin-desc-loader');
+      return;
+    }
+
+    selectTool(toolId);
+  });
+});
+
+// ========================================
+// Hash change (browser back/forward)
+// ========================================
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.replace('#', '');
+  if (hash) {
+    const toolId = hashToToolId(hash);
+    if (toolId) {
+      selectTool(toolId, false);
+      return;
+    }
+  }
+  // No valid hash → show welcome
+  resetToWelcome();
+});
+
+// ========================================
+// Reset to welcome state
+// ========================================
+function resetToWelcome() {
+  navItems.forEach(el => el.classList.remove('active'));
+  welcome.style.display = '';
+  toolPane.classList.remove('active');
+  currentTool = null;
+}
+
+// ========================================
+// Init on page load
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Check hash
+  const hash = location.hash.replace('#', '');
+  if (hash) {
+    const toolId = hashToToolId(hash);
+    if (toolId) {
+      // If hash is PDE, expand accordion
+      if (toolId === 'plugin-desc-editor') {
+        toggleAccordion(true);
+      }
+      selectTool(toolId, false);
+      return;
+    }
+  }
+
+  // Default to first tool: PluginDescLoader
+  selectTool('plugin-desc-loader', false);
+});
+</script>
 </body>
 </html>

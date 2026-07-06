@@ -1,4 +1,4 @@
-/* === 基础重置与全局样式 === */
+﻿/* === 基础重置与全局样式 === */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -6,19 +6,20 @@
 }
 
 :root {
-  --color-bg:          #f8f9fa;
+  --color-bg:          #f4f5f7;
   --color-surface:     #ffffff;
-  --color-border:      #dde1e6;
-  --color-text:        #212529;
-  --color-text-muted:  #6c757d;
-  --color-primary:     #4a90d9;
-  --color-primary-hov: #357abd;
-  --color-sidebar-bg:  #f0f2f5;
+  --color-border:      #e2e5ea;
+  --color-text:        #1a1d23;
+  --color-text-muted:  #6b7280;
+  --color-primary:     #4f6ef7;
+  --color-primary-hov: #3b57d9;
+  --color-primary-subtle: #eef1ff;
+  --color-sidebar-bg:  #edeff2;
   --color-header-bg:   #ffffff;
-  --color-entry-hov:   #e8f0fe;
-  --color-accent:      #e8f0fe;
+  --color-entry-hov:   #eef1ff;
+  --color-accent:      #eef1ff;
   --radius:            6px;
-  --shadow:            0 1px 3px rgba(0,0,0,0.08);
+  --color-note-bg:     #f8f9fc;
   --transition:        0.15s ease;
 }
 
@@ -30,6 +31,9 @@ html, body {
   color: var(--color-text);
   background: var(--color-bg);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
 /* === 顶部栏 === */
@@ -41,56 +45,63 @@ html, body {
   padding: 0 20px;
   background: var(--color-header-bg);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   z-index: 10;
   position: relative;
 }
 
 #topBar h1 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-text);
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
 .toolbar-buttons {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin-left: auto;
 }
 
 .toolbar-buttons button {
-  padding: 6px 16px;
+  padding: 6px 14px;
   font-size: 13px;
+  font-weight: 500;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition);
+  transition: all var(--transition);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: inherit;
 }
 
 .toolbar-buttons button:hover:not(:disabled) {
   background: var(--color-primary);
   color: #fff;
   border-color: var(--color-primary);
+  box-shadow: 0 1px 4px rgba(79,110,247,0.25);
 }
 
 .toolbar-buttons button:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 /* === 主体容器 === */
 #mainContainer {
   display: flex;
-  height: calc(100% - 52px);
+  height: calc(100vh - 52px);
 }
 
 /* === 侧边导航栏 === */
 #sidebar {
-  width: 240px;
+  width: 220px;
   min-width: 200px;
   background: var(--color-sidebar-bg);
   border-right: 1px solid var(--color-border);
@@ -100,8 +111,8 @@ html, body {
 }
 
 .sidebar-header {
-  padding: 12px 14px;
-  font-size: 12px;
+  padding: 14px 16px 8px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -131,8 +142,8 @@ html, body {
 .sidebar-file-header {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 7px 14px;
+  gap: 6px;
+  padding: 9px 16px;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text);
@@ -150,6 +161,7 @@ html, body {
   transition: transform var(--transition);
   color: var(--color-text-muted);
   width: 12px;
+  flex-shrink: 0;
   text-align: center;
 }
 
@@ -158,27 +170,37 @@ html, body {
 }
 
 .sidebar-file-entry {
-  display: block;
-  padding: 5px 14px 5px 30px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 16px 5px 32px;
   font-size: 12px;
   color: var(--color-text-muted);
   cursor: pointer;
   text-decoration: none;
-  transition: background var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-left: 2px solid transparent;
 }
 
 .sidebar-file-entry:hover {
   background: var(--color-entry-hov);
   color: var(--color-primary);
+  border-left-color: var(--color-primary);
 }
 
 .sidebar-file-entry.active {
+  border-left-color: var(--color-primary);
   background: var(--color-accent);
   color: var(--color-primary);
   font-weight: 500;
+}
+
+.sidebar-file-entry .entry-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-file.collapsed .sidebar-file-entries {
@@ -191,14 +213,15 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--color-bg);
 }
 
 /* === 标签页栏 === */
 .tab-bar {
   display: flex;
   gap: 0;
-  padding: 0 20px;
-  background: var(--color-bg);
+  padding: 0 16px;
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   overflow-x: auto;
   flex-shrink: 0;
@@ -216,6 +239,7 @@ html, body {
   white-space: nowrap;
   transition: color var(--transition), border-color var(--transition);
   margin-bottom: -1px;
+  font-family: inherit;
 }
 
 .tab:hover {
@@ -225,6 +249,7 @@ html, body {
 .tab.active {
   color: var(--color-primary);
   border-bottom-color: var(--color-primary);
+  font-weight: 600;
 }
 
 /* === 文件面板 === */
@@ -263,15 +288,20 @@ html, body {
 .entry-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  margin-bottom: 12px;
-  box-shadow: var(--shadow);
-  transition: box-shadow var(--transition);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: box-shadow var(--transition), border-color var(--transition);
+  overflow: hidden;
+}
+
+.entry-card:hover {
+  border-color: #d0d4da;
 }
 
 .entry-card:target {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(74,144,217,0.2);
+  box-shadow: 0 0 0 3px rgba(79,110,247,0.12);
 }
 
 /* 条目标题栏 */
@@ -282,18 +312,16 @@ html, body {
   padding: 10px 14px;
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--color-border);
   transition: background var(--transition);
-  border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .entry-header:hover {
-  background: #f5f7fa;
+  background: #f8f9fb;
 }
 
 .entry-card.collapsed .entry-header {
   border-bottom: none;
-  border-radius: var(--radius);
 }
 
 .entry-header .collapse-icon {
@@ -301,6 +329,7 @@ html, body {
   color: var(--color-text-muted);
   transition: transform var(--transition);
   width: 14px;
+  flex-shrink: 0;
   text-align: center;
 }
 
@@ -313,28 +342,35 @@ html, body {
   color: var(--color-text-muted);
   font-weight: 500;
   min-width: 32px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .entry-header .entry-name {
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .entry-header .import-hint {
   font-size: 11px;
-  color: #e67e22;
-  background: #fef3e2;
-  padding: 1px 8px;
+  color: #c9772e;
+  background: #fef6ee;
+  padding: 2px 8px;
   border-radius: 10px;
   margin-left: auto;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* 条目主体 */
 .entry-body {
   display: flex;
   gap: 12px;
-  padding: 10px 14px 14px;
+  padding: 12px 14px 14px;
 }
 
 .entry-card.collapsed .entry-body {
@@ -345,31 +381,31 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
 }
 
 .note-group label {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-muted);
+  letter-spacing: 0.02em;
 }
 
 .note-group textarea {
   flex: 1;
-  min-height: 200px;
-  height: 200px;
+  min-height: 180px;
   resize: vertical;
   overflow: auto;
-  padding: 8px 10px;
+  padding: 10px 12px;
   font-size: 13px;
   font-family: "SF Mono", "Fira Code", "Consolas", "Microsoft YaHei", monospace;
-  line-height: 1.5;
+  line-height: 1.6;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: #fafbfc;
+  border-radius: 6px;
+  background: var(--color-note-bg);
   color: var(--color-text);
-  transition: border-color var(--transition), background var(--transition);
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
   tab-size: 2;
 }
 
@@ -377,18 +413,23 @@ html, body {
   outline: none;
   border-color: var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 0 0 2px rgba(74,144,217,0.15);
+  box-shadow: 0 0 0 3px rgba(79,110,247,0.10);
+}
+
+.note-group textarea::placeholder {
+  color: #b0b5bc;
 }
 
 /* === 确认对话框 === */
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.35);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 100;
+  backdrop-filter: blur(2px);
 }
 
 .dialog-overlay:not([hidden]) {
@@ -397,11 +438,23 @@ html, body {
 
 .dialog-box {
   background: var(--color-surface);
-  border-radius: 8px;
-  padding: 24px 28px;
+  border-radius: 10px;
+  padding: 24px 28px 20px;
   min-width: 320px;
   max-width: 440px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  animation: dialog-in 0.2s ease;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dialog-box p {
@@ -420,15 +473,18 @@ html, body {
 .dialog-buttons button {
   padding: 7px 20px;
   font-size: 13px;
+  font-weight: 500;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-surface);
   cursor: pointer;
-  transition: background var(--transition);
+  transition: all var(--transition);
+  font-family: inherit;
 }
 
 .dialog-buttons button:hover {
-  background: #eee;
+  background: var(--color-bg);
+  border-color: #cdd0d6;
 }
 
 .dialog-buttons #confirmYes {
@@ -439,11 +495,13 @@ html, body {
 
 .dialog-buttons #confirmYes:hover {
   background: var(--color-primary-hov);
+  box-shadow: 0 1px 4px rgba(79,110,247,0.25);
 }
 
 /* === 滚动条美化 === */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -451,10 +509,10 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c4c9cf;
+  background: #c9cdd3;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a0a6ad;
+  background: #a8aeb6;
 }

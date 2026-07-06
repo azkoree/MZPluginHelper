@@ -1,4 +1,4 @@
-/**
+﻿/**
  * RMMZ 数据库备注编辑器 — 核心逻辑
  *
  * 支持的数据库文件：Actors, Armors, Classes, Enemies, Items, Skills, States, Tilesets, Weapons
@@ -402,7 +402,7 @@ sidebarNav.addEventListener('click', (e) => {
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           // 短暂高亮
-          el.style.boxShadow = '0 0 0 2px rgba(74,144,217,0.4)';
+          el.style.boxShadow = '0 0 0 3px rgba(79,110,247,0.2)';
           setTimeout(() => { el.style.boxShadow = ''; }, 1500);
         }
       });
