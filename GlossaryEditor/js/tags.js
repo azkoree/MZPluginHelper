@@ -27,10 +27,10 @@ const TagInserter = (() => {
         {
             name: "文本说明",
             items: [
-                { tagName: "SGDescription",           label: "说明文",                params: [{ label: "说明内容", placeholder: "输入说明文..." }] },
+                { tagName: "SGDescription",           label: "说明文",                params: [{ label: "说明内容", placeholder: "输入说明文...", skipPrompt: true }] },
                 { tagName: "SGDescription",           label: "第N页说明文",            params: [
                     { label: "页码", placeholder: "2~99" },
-                    { label: "说明内容", placeholder: "输入说明文..." }
+                    { label: "说明内容", placeholder: "输入说明文...", skipPrompt: true }
                 ], pageSuffix: true },
                 { tagName: "SG共通説明",                label: "共用说明文（日）",       params: [{ label: "说明内容", placeholder: "所有页面通用" }] },
                 { tagName: "SGCommonDescription",      label: "共用说明文（英）",       params: [{ label: "说明内容", placeholder: "所有页面通用" }] },
@@ -95,12 +95,16 @@ const TagInserter = (() => {
     // ==========================================================================
 
     function insertAtCursor(textarea, text) {
+        // 处理光标占位符 \x00
+        const cursorIdx = text.indexOf("\x00");
+        const cleanText = text.replace(/\x00/g, "");
+
         const start = textarea.selectionStart;
         const end   = textarea.selectionEnd;
         const before = textarea.value.substring(0, start);
         const after  = textarea.value.substring(end);
-        textarea.value = before + text + after;
-        const pos = start + text.length;
+        textarea.value = before + cleanText + after;
+        const pos = (cursorIdx !== -1 ? start + cursorIdx : start + cleanText.length);
         textarea.selectionStart = pos;
         textarea.selectionEnd   = pos;
         textarea.focus();
@@ -137,8 +141,14 @@ const TagInserter = (() => {
                 return null;
             }
             finalName = name + n;
-            const content = prompt(tagDef.params[1].label, "");
-            if (content === null) return null;
+            const hasSkip = tagDef.params[1] && tagDef.params[1].skipPrompt;
+            let content;
+            if (hasSkip) {
+                content = "\x00";  // 光标占位符
+            } else {
+                content = prompt(tagDef.params[1].label, "");
+                if (content === null) return null;
+            }
             return "<" + finalName + ":" + content + ">\n";
         }
 
@@ -146,9 +156,13 @@ const TagInserter = (() => {
         if (tagDef.params && tagDef.params.length > 0) {
             const values = [];
             for (const p of tagDef.params) {
-                const val = prompt(p.label, "");
-                if (val === null) return null;
-                values.push(val);
+                if (p.skipPrompt) {
+                    values.push("\x00");  // 光标占位符
+                } else {
+                    const val = prompt(p.label, "");
+                    if (val === null) return null;
+                    values.push(val);
+                }
             }
             const paramStr = tagDef.multi
                 ? values.join(",")

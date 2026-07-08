@@ -6,7 +6,34 @@
 const DataStore = (() => {
     "use strict";
 
+    const STORAGE_KEY = "GlossaryEditor_data";
+
     let entries = [];
+
+    // ==========================================================================
+    // 本地存储
+    // ==========================================================================
+
+    function saveToStorage() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        } catch (e) {
+            // 存储空间满或不可用时静默失败
+        }
+    }
+
+    function loadFromStorage() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            if (!Array.isArray(data)) return null;
+            entries = data;
+            return entries.length;
+        } catch (e) {
+            return null;
+        }
+    }
 
     // ==========================================================================
     // 工具函数
@@ -88,6 +115,7 @@ const DataStore = (() => {
             });
 
             entries.sort((a, b) => a.id - b.id);
+            saveToStorage();
             return entries.length;
         },
 
@@ -136,6 +164,7 @@ const DataStore = (() => {
         add(entry) {
             entries.push({ ...entry });
             entries.sort((a, b) => a.id - b.id);
+            saveToStorage();
         },
 
         update(oldId, data) {
@@ -143,17 +172,40 @@ const DataStore = (() => {
             if (idx === -1) return false;
             entries[idx] = { ...entries[idx], ...data };
             entries.sort((a, b) => a.id - b.id);
+            saveToStorage();
             return true;
         },
 
         remove(id) {
             const len = entries.length;
             entries = entries.filter(e => e.id !== id);
+            if (entries.length !== len) saveToStorage();
             return entries.length !== len;
         },
 
         count() {
             return entries.length;
+        },
+
+        /** 从 localStorage 恢复数据，返回条目数或 null */
+        loadFromStorage() {
+            return loadFromStorage();
+        },
+
+        /** 检查 localStorage 中是否有保存的数据 */
+        hasSavedData() {
+            try {
+                return !!localStorage.getItem(STORAGE_KEY);
+            } catch (e) {
+                return false;
+            }
+        },
+
+        /** 清除本地存储 */
+        clearStorage() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
         }
     };
 })();

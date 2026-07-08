@@ -81,10 +81,17 @@
             onNew() {
                 const nextId = DataStore.getNextId();
                 const categories = DataStore.getCategories();
+
+                // 弹窗输入词典id，防止忘记
+                const existingTypes = DataStore.getGlossaryTypes();
+                const defaultType = existingTypes.length > 0 ? existingTypes[0] : "";
+                const glossaryType = prompt("请输入词典id (SGType)", defaultType);
+                if (glossaryType === null) return; // 用户取消
+
                 const emptyEntry = {
                     id: nextId, name: "", iconIndex: 0, itypeId: 4,
                     category: categories.length > 0 ? categories[0] : "",
-                    glossaryType: "", note: ""
+                    glossaryType: glossaryType, note: "<SGDescription:>"
                 };
                 DataStore.add(emptyEntry);
 
@@ -100,6 +107,17 @@
                 UI.setStatus("已创建新条目，请在右侧编辑");
             }
         });
+
+        // 自动恢复 localStorage 中的数据
+        const savedCount = DataStore.loadFromStorage();
+        if (savedCount > 0) {
+            UI.refreshList();
+            const entries = DataStore.getAll();
+            const entry = DataStore.getById(entries[0].id);
+            UI.refreshEditor(entry, DataStore.getCategories());
+            UI.selectItem(entry.id);
+            UI.setStatus("已从本地存储恢复 " + savedCount + " 条数据");
+        }
     });
 
     function readCurrentFormData() {

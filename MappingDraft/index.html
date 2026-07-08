@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RMMZ Map Draft</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 新建地图弹窗 -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>新建地图</h2>
+      <div class="modal-form">
+        <label>
+          地图宽度（格数）
+          <input type="number" id="map-width" value="30" min="1" max="200">
+        </label>
+        <label>
+          地图高度（格数）
+          <input type="number" id="map-height" value="20" min="1" max="200">
+        </label>
+        <label>
+          格数大小（像素）
+          <input type="number" id="map-tile" value="32" min="8" max="128">
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn btn-secondary">取消</button>
+        <button id="modal-confirm" class="btn btn-primary">创建</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 顶栏 -->
+  <header id="header">
+    <h1>RMMZ Map Draft</h1>
+    <div class="header-actions">
+      <button id="btn-new" class="btn btn-primary">新建地图</button>
+      <button id="btn-export-json" class="btn">导出 JSON</button>
+      <button id="btn-import-json" class="btn">导入 JSON</button>
+      <button id="btn-export-png" class="btn">导出 PNG</button>
+    </div>
+  </header>
+
+  <!-- 主区域 -->
+  <div id="main">
+    <!-- 左侧栏 -->
+    <aside id="sidebar-left">
+      <section id="tool-section">
+        <h3>绘画工具</h3>
+        <div class="tool-group" id="tool-group">
+          <button class="tool-btn active" data-tool="pencil" title="铅笔（点击单个方格绘制）">✏️ 铅笔</button>
+          <button class="tool-btn" data-tool="eraser" title="橡皮（点击清除方格）">🧹 橡皮</button>
+          <button class="tool-btn" data-tool="rect-fill" title="矩形填充（拖拽绘制矩形区域）">⬜ 矩形</button>
+          <button class="tool-btn" data-tool="rect-eraser" title="矩形橡皮（拖拽批量删除矩形区域）">⬜🧹 矩形橡皮</button>
+          <button class="tool-btn" data-tool="flood-fill" title="填充（点击填充相连区域）">🪣 填充</button>
+          <button class="tool-btn" data-tool="selection" title="选框（拖拽创建选区标注）">📐 选框</button>
+        </div>
+      </section>
+      <section id="color-section">
+        <h3>绘制元素</h3>
+        <div class="color-group" id="color-group">
+          <!-- 由 JS 动态渲染 -->
+        </div>
+      </section>
+    </aside>
+
+    <!-- 中间 - 画布 -->
+    <main id="canvas-container">
+      <canvas id="map-canvas"></canvas>
+      <div id="empty-hint" class="empty-hint">
+        <p>暂无地图 · 点击上方「新建地图」开始</p>
+      </div>
+    </main>
+
+    <!-- 右侧栏 -->
+    <aside id="sidebar-right">
+      <section id="selection-section">
+        <h3>选区信息</h3>
+        <div id="selection-info">
+          <p class="hint">请使用选框工具拖拽创建选区</p>
+        </div>
+      </section>
+      <section id="map-info-section">
+        <h3>地图信息</h3>
+        <div id="map-info">
+          <p class="hint">暂无地图</p>
+        </div>
+      </section>
+      <section id="resize-section">
+        <h3>调整尺寸</h3>
+        <div id="resize-controls" class="controls-panel">
+          <div class="form-row">
+            <label>宽 <input type="number" id="resize-w" min="1" max="500"></label>
+            <label>高 <input type="number" id="resize-h" min="1" max="500"></label>
+          </div>
+          <div class="form-row radio-row">
+            <label><input type="radio" name="resize-align" value="top-left" checked> 左上</label>
+            <label><input type="radio" name="resize-align" value="center"> 居中</label>
+          </div>
+          <button id="btn-resize" class="btn btn-sm">应用</button>
+        </div>
+      </section>
+      <section id="shift-section">
+        <h3>移动地图</h3>
+        <div id="shift-controls" class="controls-panel">
+          <div class="form-row">
+            <select id="shift-dir">
+              <option value="up">↑ 上</option>
+              <option value="down">↓ 下</option>
+              <option value="left">← 左</option>
+              <option value="right">→ 右</option>
+            </select>
+            <label><input type="number" id="shift-amount" value="1" min="1" max="999"> 格</label>
+          </div>
+          <button id="btn-shift" class="btn btn-sm">移动</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
