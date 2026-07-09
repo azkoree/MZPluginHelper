@@ -244,7 +244,12 @@ function buildGroups(langItems) {
 
   pluginItems.forEach(item => {
     const key = item.tagKey;
-    if (!key) { orphans.push(item); return; }
+    // Skip items already displayed in dedicated groups (help, plugindesc, author)
+    if (!key) {
+      if (item.type === 'help' || item.type === 'plugindesc' || item.type === 'author') return;
+      orphans.push(item);
+      return;
+    }
 
     if (!nodes[key]) {
       // Determine if this is a param, command, or arg node
