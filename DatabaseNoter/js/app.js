@@ -202,40 +202,28 @@ async function importFiles(files) {
 
 // ==================== 侧边导航栏渲染 ====================
 
-/** 侧边栏中每个文件是否收起（记忆状态） */
-const sidebarCollapsed = {};
-
 function renderSidebar() {
-  const fileNames = Object.keys(state.files).sort();
-
-  if (fileNames.length === 0) {
+  if (!state.currentFile || !state.files[state.currentFile]) {
     sidebarNav.innerHTML = '<div class="sidebar-empty">暂无导入文件<br>请点击上方「导入 JSON」</div>';
     return;
   }
 
+  const fileName = state.currentFile;
+  const fileData = state.files[fileName];
+
+  // 更新侧边栏头部：显示当前文件名 + 条目数
+  const headerEl = document.querySelector('.sidebar-header');
+  if (headerEl) {
+    headerEl.textContent = `${fileName}.json（${fileData.entries.length} 条）`;
+  }
+
   let html = '';
-
-  for (const fileName of fileNames) {
-    const collapsed = sidebarCollapsed[fileName] || false;
-    const arrow = collapsed ? '▶' : '▼';
-    const fileData = state.files[fileName];
-    const isActive = fileName === state.currentFile;
-
-    html += `<div class="sidebar-file${collapsed ? ' collapsed' : ''}" data-file="${escapeHtml(fileName)}">`;
-    html += `<div class="sidebar-file-header" data-action="toggle-file" data-file="${escapeHtml(fileName)}">`;
-    html += `<span class="arrow">${arrow}</span>`;
-    html += `<span>${escapeHtml(fileName)}.json</span>`;
-    html += `</div>`;
-
-    html += `<div class="sidebar-file-entries">`;
-    for (const entry of fileData.entries) {
-      const label = entry.name || `#${String(entry.id).padStart(3, '0')}`;
-      const entryClass = (isActive && entry.id === (activeEntryId || null)) ? ' active' : '';
-      html += `<a class="sidebar-file-entry${entryClass}" data-action="go-entry" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
-      html += `${String(entry.id).padStart(3, '0')}: ${escapeHtml(label)}`;
-      html += `</a>`;
-    }
-    html += `</div></div>`;
+  for (const entry of fileData.entries) {
+    const label = entry.name || `#${String(entry.id).padStart(3, '0')}`;
+    const isActive = entry.id === activeEntryId;
+    html += `<a class="sidebar-file-entry${isActive ? ' active' : ''}" data-action="go-entry" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
+    html += `${String(entry.id).padStart(3, '0')}: ${escapeHtml(label)}`;
+    html += `</a>`;
   }
 
   sidebarNav.innerHTML = html;
@@ -285,7 +273,6 @@ function renderEditor() {
 
     for (const entry of fileData.entries) {
       const idStr = String(entry.id).padStart(3, '0');
-      const name = entry.name || '（无名称）';
       const collapsed = collapsedEntries[fileName] && collapsedEntries[fileName].has(entry.id);
 
       html += `<div class="entry-card${collapsed ? ' collapsed' : ''}" id="entry-${escapeHtml(fileName)}-${entry.id}" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
@@ -294,7 +281,7 @@ function renderEditor() {
       html += `<div class="entry-header" data-action="toggle-entry" data-file="${escapeHtml(fileName)}" data-id="${entry.id}">`;
       html += `<span class="collapse-icon">${collapsed ? '▶' : '▼'}</span>`;
       html += `<span class="entry-id">${idStr}</span>`;
-      html += `<span class="entry-name">${escapeHtml(name)}</span>`;
+      html += `<input class="entry-name" type="text" data-field="name" data-file="${escapeHtml(fileName)}" data-id="${entry.id}" value="${escapeHtml(entry.name)}" placeholder="（无名称）" spellcheck="false">`;
       if (entry.importHint) {
         html += `<span class="import-hint" title="导入时未能识别格式，原备注内容已全部放入描述框">⚠ 旧格式</span>`;
       }
@@ -384,16 +371,7 @@ sidebarNav.addEventListener('click', (e) => {
   const entryId = target.dataset.id ? Number(target.dataset.id) : null;
 
   switch (action) {
-    case 'toggle-file': {
-      sidebarCollapsed[fileName] = !sidebarCollapsed[fileName];
-      renderSidebar();
-      break;
-    }
     case 'go-entry': {
-      // 切换到对应标签页
-      if (state.currentFile !== fileName) {
-        switchTab(fileName);
-      }
       // 滚动到对应条目
       activeEntryId = entryId;
       renderSidebar();  // 更新高亮
@@ -413,6 +391,8 @@ sidebarNav.addEventListener('click', (e) => {
 
 /** 点击编辑区域（标签页 / 条目折叠） */
 editorArea.addEventListener('click', (e) => {
+  // 点击输入控件时不触发条目折叠/标签页切换
+  if (e.target.closest('input, textarea')) return;
   const target = e.target.closest('[data-action]');
   if (!target) return;
 
@@ -427,9 +407,9 @@ editorArea.addEventListener('click', (e) => {
   }
 });
 
-/** textarea 内容变更 → 实时写入 state */
+/** textarea / input 内容变更 → 实时写入 state */
 editorArea.addEventListener('input', (e) => {
-  const ta = e.target.closest('textarea[data-field]');
+  const ta = e.target.closest('textarea[data-field], input[data-field]');
   if (!ta) return;
 
   const fileName = ta.dataset.file;
@@ -464,7 +444,7 @@ function exportCurrentFile() {
 
   for (const entry of fileData.entries) {
     const newNote = buildNote(entry.configNote, entry.descNote);
-    const obj = { ...entry.original, note: newNote };
+    const obj = { ...entry.original, name: entry.name, note: newNote };
     output.push(obj);
   }
 
@@ -506,7 +486,7 @@ async function exportZip() {
 
     for (const entry of fileData.entries) {
       const newNote = buildNote(entry.configNote, entry.descNote);
-      const obj = { ...entry.original, note: newNote };
+      const obj = { ...entry.original, name: entry.name, note: newNote };
       output.push(obj);
     }
 
@@ -530,18 +510,18 @@ async function exportZip() {
   URL.revokeObjectURL(url);
 }
 
-/** 将页面上所有 textarea 的值同步回 state */
+/** 将页面上所有输入控件的值同步回 state */
 function syncAllTextareas() {
-  const textareas = editorArea.querySelectorAll('textarea[data-field]');
-  for (const ta of textareas) {
-    const fileName = ta.dataset.file;
-    const entryId = Number(ta.dataset.id);
-    const field = ta.dataset.field;
+  const inputs = editorArea.querySelectorAll('textarea[data-field], input[data-field]');
+  for (const el of inputs) {
+    const fileName = el.dataset.file;
+    const entryId = Number(el.dataset.id);
+    const field = el.dataset.field;
     const fileData = state.files[fileName];
     if (!fileData) continue;
     const entry = fileData.entries.find(en => en.id === entryId);
     if (entry) {
-      entry[field] = ta.value;
+      entry[field] = el.value;
     }
   }
 }

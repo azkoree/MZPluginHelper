@@ -206,6 +206,42 @@ const DataStore = (() => {
             try {
                 localStorage.removeItem(STORAGE_KEY);
             } catch (e) {}
+        },
+
+        // ======================================================================
+        // 拖拽排序支持
+        // ======================================================================
+
+        /**
+         * 将指定 ID 的条目移动到数组中的目标索引位置。
+         * 返回新位置索引，-1 表示未找到。
+         */
+        moveEntry(id, targetIndex) {
+            const oldIndex = entries.findIndex(e => e.id === id);
+            if (oldIndex === -1 || oldIndex === targetIndex) return oldIndex;
+            const [item] = entries.splice(oldIndex, 1);
+            // targetIndex 是针对删除后的数组计算的
+            entries.splice(targetIndex, 0, item);
+            saveToStorage();
+            return targetIndex;
+        },
+
+        /**
+         * 将全部条目按当前数组顺序重新编号。
+         * 起始 ID 默认 10001，步长默认 1（即 10001, 10002, 10003 ...）。
+         * 返回 { oldToNew: Map } 供 UI 层追踪选中项 ID 变化。
+         */
+        renumberAll(startId, step) {
+            startId = startId || 10001;
+            step   = step   || 1;
+            const oldToNew = new Map();
+            entries.forEach((entry, i) => {
+                const newId = startId + i * step;
+                oldToNew.set(entry.id, newId);
+                entry.id = newId;
+            });
+            saveToStorage();
+            return oldToNew;
         }
     };
 })();

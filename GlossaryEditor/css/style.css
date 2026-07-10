@@ -118,6 +118,28 @@ html, body { height: 100%; font-family: var(--font); font-size: 14px; line-heigh
 .list-item-category { font-size: 11px; color: var(--text-muted); background: #f0f2f5; padding: 1px 6px; border-radius: 3px; flex-shrink: 0; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
 .list-empty { padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
 
+/* ---- 拖拽排序 ---- */
+
+.drag-handle {
+    display: flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; flex-shrink: 0; cursor: grab;
+    color: var(--text-muted); font-size: 13px; line-height: 1;
+    user-select: none; border-radius: 3px; opacity: 0.3;
+    transition: opacity 0.15s, background 0.15s;
+    margin-right: 2px;
+}
+.list-item:hover .drag-handle { opacity: 0.7; }
+.drag-handle:hover { opacity: 1 !important; background: #e5e7eb; }
+.drag-handle:active { cursor: grabbing; }
+
+.list-item.dragging {
+    opacity: 0.35;
+    background: var(--accent-light) !important;
+}
+
+.list-item.drop-before { box-shadow: 0 -2px 0 0 var(--accent); }
+.list-item.drop-after  { box-shadow: 0  2px 0 0 var(--accent); }
+
 /* ---- 列表底部 ---- */
 
 .list-actions { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border-light); flex-shrink: 0; }

@@ -147,6 +147,14 @@ const UI = (() => {
             const div = document.createElement("div");
             div.className = "list-item" + (entry.id === selectedId ? " selected" : "");
             div.dataset.id = entry.id;
+            div.draggable = true;
+
+            // 拖拽把手
+            const handle = document.createElement("span");
+            handle.className = "drag-handle";
+            handle.textContent = "\u2804";  // ⠄ 小把手图标
+            handle.title = "拖拽排序";
+            div.appendChild(handle);
 
             const idSpan = document.createElement("span");
             idSpan.className = "list-item-id";
@@ -350,7 +358,12 @@ const UI = (() => {
         ["dragenter", "dragover", "dragleave", "drop"].forEach(evt => {
             document.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); });
         });
-        document.addEventListener("dragenter", () => overlay.classList.add("active"));
+        document.addEventListener("dragenter", e => {
+            // 仅文件拖入时显示覆盖层，忽略内部元素拖拽
+            if (e.dataTransfer.types && e.dataTransfer.types.includes("Files")) {
+                overlay.classList.add("active");
+            }
+        });
         document.addEventListener("dragleave", e => {
             if (e.relatedTarget === null || e.relatedTarget === document.body) overlay.classList.remove("active");
         });
@@ -393,6 +406,109 @@ const UI = (() => {
     }
 
     // ==========================================================================
+    // 列表拖拽排序
+    // ==========================================================================
+
+    function setupListDragDrop() {
+        const listBody = els.listBody;
+        let draggedId = null;
+        let dragFromHandle = false;
+
+        // 用 mousedown 标记是否从把手发起（dragstart 的 target 始终是 draggable 父元素）
+        listBody.addEventListener("mousedown", e => {
+            dragFromHandle = !!e.target.closest(".drag-handle");
+        });
+
+        listBody.addEventListener("dragstart", e => {
+            if (!dragFromHandle) {
+                e.preventDefault();
+                return;
+            }
+            const item = e.target.closest(".list-item");
+            if (!item) return;
+            draggedId = parseInt(item.dataset.id);
+            item.classList.add("dragging");
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", String(draggedId));
+        });
+
+        listBody.addEventListener("dragend", () => {
+            const dragItem = listBody.querySelector(".list-item.dragging");
+            if (dragItem) dragItem.classList.remove("dragging");
+            listBody.querySelectorAll(".drop-before, .drop-after").forEach(el =>
+                el.classList.remove("drop-before", "drop-after"));
+            draggedId = null;
+            dragFromHandle = false;
+        });
+
+        listBody.addEventListener("dragover", e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            const item = e.target.closest(".list-item");
+            if (!item || !draggedId || parseInt(item.dataset.id) === draggedId) return;
+
+            // 清除其他项的指示器
+            listBody.querySelectorAll(".drop-before, .drop-after").forEach(el => {
+                if (el !== item) el.classList.remove("drop-before", "drop-after");
+            });
+
+            const rect = item.getBoundingClientRect();
+            const mid = rect.top + rect.height / 2;
+            item.classList.remove("drop-before", "drop-after");
+            item.classList.add(e.clientY < mid ? "drop-before" : "drop-after");
+        });
+
+        listBody.addEventListener("dragleave", e => {
+            const item = e.target.closest(".list-item");
+            if (item && !item.contains(e.relatedTarget)) {
+                item.classList.remove("drop-before", "drop-after");
+            }
+        });
+
+        listBody.addEventListener("drop", e => {
+            e.preventDefault();
+            const item = e.target.closest(".list-item");
+            if (!item || !draggedId || parseInt(item.dataset.id) === draggedId) return;
+
+            const targetId = parseInt(item.dataset.id);
+            const rect = item.getBoundingClientRect();
+            const mid = rect.top + rect.height / 2;
+            const after = e.clientY >= mid;
+
+            // 计算在完整 entries 数组中的目标索引
+            const entries = DataStore.getAll();
+            let targetIndex = entries.findIndex(en => en.id === targetId);
+            if (targetIndex === -1) return;
+            if (after) targetIndex++;
+
+            // 拖拽前自动保存当前编辑内容（避免 ID 变更后数据丢失）
+            if (isDirty && selectedId !== null) {
+                const data = readFormData();
+                if (data.id && data.id === selectedId) {
+                    DataStore.update(selectedId, data);
+                }
+                isDirty = false;
+            }
+
+            // 移动 + 重新编号
+            DataStore.moveEntry(draggedId, targetIndex);
+            const oldToNew = DataStore.renumberAll(10001, 1);
+            const newId = oldToNew.get(draggedId);
+
+            // 清除拖拽状态
+            listBody.querySelectorAll(".drop-before, .drop-after").forEach(el =>
+                el.classList.remove("drop-before", "drop-after"));
+
+            // 刷新视图并重新选中
+            refreshView();
+            if (newId !== undefined && onSelect) {
+                onSelect(newId);
+            }
+            setStatus("已排序并重新编号");
+        });
+    }
+
+    // ==========================================================================
     // 公开 API
     // ==========================================================================
 
@@ -409,6 +525,7 @@ const UI = (() => {
             cacheElements();
             setupDragAndDrop();
             setupKeyboardShortcuts();
+            setupListDragDrop();
 
             // 导出
             els.exportBtn.addEventListener("click", () => {
