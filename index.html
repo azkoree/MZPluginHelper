@@ -598,13 +598,7 @@ body {
 
     <!-- 插件描述 -->
     <div class="nav-category">插件描述</div>
-    <button class="nav-item" data-tool="plugin-desc-loader" data-url="PluginDescLoader/index.html" data-hash="PluginDescLoader">
-      <span class="nav-toggle-area" id="toggle-pdl" aria-label="展开子项">▶</span>
-      PluginDescLoader
-    </button>
-    <button class="nav-item is-child is-child-wrap" data-tool="plugin-desc-editor" data-url="PluginDescEditor/index.html" data-hash="PluginDescEditor" data-parent="plugin-desc-loader">
-      PluginDescEditor <span class="child-label">（旧）</span>
-    </button>
+    <button class="nav-item" data-tool="plugin-desc-loader" data-url="PluginDescLoader/index.html" data-hash="PluginDescLoader">PluginDescLoader</button>
 
     <!-- 已有插件扩展 -->
     <div class="nav-category">已有插件扩展</div>
@@ -624,6 +618,7 @@ body {
     <div class="nav-category">废弃</div>
     <button class="nav-item" data-tool="database-noter" data-url="DatabaseNoter/index.html" data-hash="DatabaseNoter">DatabaseNoter</button>
     <button class="nav-item" data-tool="db-manager" data-url="DBManager/index.html" data-hash="DBManager">DBManager</button>
+    <button class="nav-item" data-tool="plugin-desc-editor" data-url="PluginDescEditor/index.html" data-hash="PluginDescEditor">PluginDescEditor <span class="child-label">（旧）</span></button>
 
 </nav>
 </aside>
@@ -724,8 +719,6 @@ const toolPane = document.getElementById('pane-root');
 const toolTitle = document.getElementById('toolTitle');
 const descContent = document.getElementById('descContent');
 const btnLaunch = document.getElementById('btnLaunch');
-const togglePdl = document.getElementById('toggle-pdl');
-
 let currentTool = null;
 
 // ========================================
@@ -753,14 +746,6 @@ document.addEventListener('keydown', (e) => {
 // Accordion: PluginDescLoader ↔ PluginDescEditor
 // ========================================
 const pdlBtn = document.querySelector('[data-tool="plugin-desc-loader"]');
-const pdeBtn = document.querySelector('[data-tool="plugin-desc-editor"]');
-
-function toggleAccordion(expand) {
-  const shouldOpen = expand !== undefined ? expand : !pdeBtn.classList.contains('open');
-  pdeBtn.classList.toggle('open', shouldOpen);
-  togglePdl.classList.toggle('expanded', shouldOpen);
-}
-
 // ========================================
 // Load tool description
 // ========================================
@@ -779,11 +764,6 @@ async function selectTool(toolId, updateHash = true) {
   // Activate current
   const btn = document.querySelector(`[data-tool="${toolId}"]`);
   if (btn) btn.classList.add('active');
-
-  // Auto-expand if we selected the child
-  if (toolId === 'plugin-desc-editor') {
-    toggleAccordion(true);
-  }
 
   // Hide welcome, show pane
   welcome.style.display = 'none';
@@ -861,15 +841,7 @@ navItems.forEach(btn => {
   btn.addEventListener('click', () => {
     const toolId = btn.getAttribute('data-tool');
 
-    // If it's PDL button, toggle accordion
-    if (toolId === 'plugin-desc-loader') {
-      // Toggle the accordion
-      toggleAccordion();
-      // Still select PDL
-      selectTool('plugin-desc-loader');
-      return;
-    }
-
+    selectTool(toolId);
     selectTool(toolId);
   });
 });
@@ -909,10 +881,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (hash) {
     const toolId = hashToToolId(hash);
     if (toolId) {
-      // If hash is PDE, expand accordion
-      if (toolId === 'plugin-desc-editor') {
-        toggleAccordion(true);
-      }
       selectTool(toolId, false);
       return;
     }

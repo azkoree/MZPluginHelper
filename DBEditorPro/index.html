@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RMMZ 数据库编辑器 Pro</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ========== 顶部栏 ========== -->
+  <header id="topBar">
+    <h1>RMMZ 数据库编辑器 Pro</h1>
+    <div class="toolbar-buttons">
+      <button id="btnImport" title="导入 JSON 文件">📥 导入 JSON</button>
+      <button id="btnImportProject" title="选择游戏项目的 data 文件夹批量导入">📂 导入项目</button>
+      <button id="btnViewToggle" title="切换视图" hidden>🔄 表格视图</button>
+      <button id="btnExport" title="导出当前文件的 JSON" disabled>📤 导出</button>
+      <button id="btnExportZip" title="将所有已导入文件打包为 Zip" disabled>📦 导出 Zip</button>
+    </div>
+    <!-- 隐藏输入 -->
+    <input type="file" id="fileInput" accept=".json" multiple hidden>
+    <input type="file" id="projectInput" webkitdirectory hidden>
+  </header>
+
+  <!-- ========== 主体区域 ========== -->
+  <div id="mainContainer">
+    <!-- 侧边导航栏 -->
+    <aside id="sidebar">
+      <div class="sidebar-header">已导入的文件</div>
+      <nav id="sidebarNav">
+        <div class="sidebar-empty">暂无导入文件<br>请点击上方「导入 JSON」或「导入项目」</div>
+      </nav>
+    </aside>
+
+    <!-- 编辑区域 -->
+    <main id="editorArea">
+      <div class="editor-placeholder" id="placeholderArea">
+        <p>请先导入数据库 JSON 文件</p>
+        <p class="hint">支持：Actors、Armors、Classes、Enemies、Items、Skills、States、Tilesets、Weapons</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- ========== 确认对话框 ========== -->
+  <div id="confirmDialog" class="dialog-overlay" hidden>
+    <div class="dialog-box">
+      <p id="confirmMessage"></p>
+      <div class="dialog-buttons">
+        <button id="confirmYes">确定</button>
+        <button id="confirmNo">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 数组子表编辑器 (来自 DBManager) ========== -->
+  <div id="arrayModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title"></span>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn" id="modalAddBtn">+ 添加行</button>
+        <div class="modal-footer-right">
+          <button class="btn" id="modalCancelBtn">取消</button>
+          <button class="btn btn-primary" id="modalOkBtn">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
