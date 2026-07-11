@@ -614,14 +614,18 @@ body {
 
     <!-- 数据库相关 -->
     <div class="nav-category">数据库相关</div>
-    <button class="nav-item" data-tool="database-noter" data-url="DatabaseNoter/index.html" data-hash="DatabaseNoter">DatabaseNoter</button>
-    <button class="nav-item" data-tool="db-manager" data-url="DBManager/index.html" data-hash="DBManager">DBManager</button>
+    <button class="nav-item" data-tool="db-editor-pro" data-url="DBEditorPro/index.html" data-hash="DBEditorPro">DBEditorPro</button>
 
     <!-- 杂项 -->
     <div class="nav-category">杂项</div>
     <button class="nav-item" data-tool="story-planner" data-url="StoryPlanner/index.html" data-hash="StoryPlanner">StoryPlanner</button>
 
-  </nav>
+    <!-- 废弃 -->
+    <div class="nav-category">废弃</div>
+    <button class="nav-item" data-tool="database-noter" data-url="DatabaseNoter/index.html" data-hash="DatabaseNoter">DatabaseNoter</button>
+    <button class="nav-item" data-tool="db-manager" data-url="DBManager/index.html" data-hash="DBManager">DBManager</button>
+
+</nav>
 </aside>
 
 <!-- ========== Main content ========== -->
@@ -663,6 +667,7 @@ const tools = {
   'item-info-editor':    { file: 'descriptions/ItemInfoEditor.md',    name: 'ItemInfoEditor' },
   'database-noter':      { file: 'descriptions/DatabaseNoter.md',     name: 'DatabaseNoter' },
   'db-manager':          { file: 'descriptions/DBManager.md',         name: 'DBManager' },
+  'db-editor-pro':      { file: 'descriptions/DBEditorPro.md',       name: 'DBEditorPro' },
   'story-planner':       { file: 'descriptions/StoryPlanner.md',      name: 'StoryPlanner' },
 };
 
@@ -699,6 +704,9 @@ const FALLBACK_CONTENT = {
   'db-manager': `# DBManager
 
 <!-- \u8bf7\u5728\u6b64\u586b\u5199 DBManager \u7684\u5de5\u5177\u8bf4\u660e -->`,
+  'db-editor-pro': `# DBEditorPro
+
+<!-- \u8bf7\u5728\u6b64\u586b\u5199 DBEditorPro \u7684\u5de5\u5177\u8bf4\u660e -->`,
   'story-planner': `# StoryPlanner
 
 <!-- \u8bf7\u5728\u6b64\u586b\u5199 StoryPlanner \u7684\u5de5\u5177\u8bf4\u660e -->`,
@@ -825,6 +833,7 @@ function hashToToolId(hash) {
     'ItemInfoEditor':   'item-info-editor',
     'DatabaseNoter':    'database-noter',
     'DBManager':        'db-manager',
+    'DBEditorPro':      'db-editor-pro',
     'StoryPlanner':     'story-planner',
   };
   return map[hash] || null;
@@ -839,6 +848,7 @@ function toolIdToHash(toolId) {
     'item-info-editor':   'ItemInfoEditor',
     'database-noter':     'DatabaseNoter',
     'db-manager':         'DBManager',
+    'db-editor-pro':      'DBEditorPro',
     'story-planner':      'StoryPlanner',
   };
   return map[toolId] || toolId;
