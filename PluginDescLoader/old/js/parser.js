@@ -711,8 +711,11 @@ class RMMZParser {
     }
 
     // ── Insert synthetic items (reverse insertAfterLine order) ──
-    // Always include: @text uses param name as default, @value uses option text as default
-    const insertItems = synItems;
+    // Only insert if there's a translation (or for @value, always use original)
+    const insertItems = synItems.filter(item => {
+      if (item.type === 'value') return true; // always include synthetic @value
+      return translations.has(item.id) && translations.get(item.id).trim();
+    });
 
     insertItems.sort((a, b) => b.insertAfterLine - a.insertAfterLine);
 
@@ -724,9 +727,7 @@ class RMMZParser {
       rawLines.splice(item.insertAfterLine + 1, 0, newLine);
     }
 
-    let result = rawLines.join('\n');
-    result = this._deduplicateBlock(result);
-    return result;
+    return rawLines.join('\n');
   }
 
   /** Derive a suitable comment prefix for a newly inserted line. */
@@ -763,39 +764,6 @@ class RMMZParser {
         if (item.lineIndex > end) item.lineIndex += delta;
       }
     }
-  }
-
-
-  /** Post-export deduplication */
-  _deduplicateBlock(rawText) {
-    const lines = rawText.split('\n');
-    const seen = {};
-    const toRemove = new Set();
-    let currentTag = '';
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const stripped = line.replace(/^\s*\*\s?/, '').trim();
-      const paramM = stripped.match(/^@param\s+(\S+)/);
-      const cmdM = stripped.match(/^@command\s+(\S+)/);
-      const argM = stripped.match(/^@arg\s+(\S+)/);
-      if (paramM) currentTag = paramM[1];
-      else if (cmdM) currentTag = 'cmd:' + cmdM[1];
-      else if (argM) currentTag = 'arg:' + argM[1];
-      const textM = stripped.match(/^@text\b/);
-      if (textM) {
-        const key = '@text|' + currentTag;
-        if (seen[key]) toRemove.add(i);
-        else seen[key] = i;
-      }
-      const descM = stripped.match(/^@desc\b/);
-      if (descM) {
-        const key = '@desc|' + currentTag;
-        if (seen[key]) toRemove.add(i);
-        else seen[key] = i;
-      }
-    }
-    if (toRemove.size === 0) return rawText;
-    return lines.filter((_, i) => !toRemove.has(i)).join('\n');
   }
 }
 
